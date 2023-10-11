@@ -1,15 +1,14 @@
 package br.com.projetoBase.repositorio;
 
-import br.com.projetoBase.modelo.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 
-public interface UsuarioRepositorio extends CrudRepository<Usuario, Long>,
-        JpaSpecificationExecutor<Usuario>,
-        JpaRepository<Usuario, Long> {
+import br.com.projetoBase.modelo.UsuarioPaciente;
 
-    Usuario findByUser(String nome);
+public interface UsuarioPacienteRepositorio extends CrudRepository<UsuarioPaciente, Long>,
+    JpaSpecificationExecutor<UsuarioPaciente>,
+    JpaRepository<UsuarioPaciente, Long> {
 
 }
 
