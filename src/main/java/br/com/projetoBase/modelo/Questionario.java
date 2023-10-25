@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 @Entity
 public class Questionario extends EntidadeAbstrata{
 	private String situacaoAtual;
@@ -26,6 +27,16 @@ public class Questionario extends EntidadeAbstrata{
 	private String adjetivoDescricao;
 	private String expectativas;
 	private String obeservacao;
+	
+	@ManyToOne
+	private UsuarioPaciente usuariopaciente;
+	
+	public UsuarioPaciente getUsuariopaciente() {
+		return usuariopaciente;
+	}
+	public void setUsuariopaciente(UsuarioPaciente usuariopaciente) {
+		this.usuariopaciente = usuariopaciente;
+	}
 	public String getSituacaoAtual() {
 		return situacaoAtual;
 	}
