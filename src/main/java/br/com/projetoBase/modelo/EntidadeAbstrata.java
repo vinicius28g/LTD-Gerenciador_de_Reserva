@@ -8,7 +8,6 @@ import java.util.Objects;
 @MappedSuperclass
 public abstract class EntidadeAbstrata {
 
-    @NotNull
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(unique = true)

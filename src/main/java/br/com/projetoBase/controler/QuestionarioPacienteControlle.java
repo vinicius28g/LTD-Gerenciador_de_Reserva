@@ -8,17 +8,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import br.com.projetoBase.dto.QuestionarioPaciente;
 import br.com.projetoBase.repositorio.QuestionarioRepositorio;
 import br.com.projetoBase.repositorio.UsuarioPacienteRepositorio;
 
 @RestController
-@RequestMapping("home")
+@RequestMapping("/home")
 @CrossOrigin("*")
 
 public class QuestionarioPacienteControlle {
 	private final QuestionarioRepositorio questionarioRepositorio;
 	private final UsuarioPacienteRepositorio usuarioPacienteRepositorio;
+
 	
 	public QuestionarioPacienteControlle(QuestionarioRepositorio questionarioRepositorio,
 			UsuarioPacienteRepositorio usuarioPacienteRepositorio) {
@@ -26,14 +28,14 @@ public class QuestionarioPacienteControlle {
 		this.questionarioRepositorio = questionarioRepositorio;
 		this.usuarioPacienteRepositorio = usuarioPacienteRepositorio;
 	}
-	@PostMapping("quest")
+	@PostMapping("/quest")
 	public ResponseEntity<?> salvar(@RequestBody QuestionarioPaciente questionarioPaciente){
 		var usuarioPaciente = usuarioPacienteRepositorio.buscarPorCpf(questionarioPaciente.usuarioPaciente().getCpf());
 		if(usuarioPaciente.isPresent()) {
 			var aux = usuarioPaciente.get();
 			questionarioPaciente.usuarioPaciente().setId(aux.getId());			
 		}
-		
+
 		usuarioPacienteRepositorio.save(questionarioPaciente.usuarioPaciente());
 		
 		if(questionarioPaciente.questionario() != null) {
