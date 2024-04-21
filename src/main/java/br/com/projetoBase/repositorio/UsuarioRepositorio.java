@@ -9,7 +9,7 @@ public interface UsuarioRepositorio extends JpaRepository<Usuario, Long>{
 
     Usuario findByUser(String nome);
     
-    Usuario save(Usuario usuario);
+//    Usuario save(Usuario usuario);
 
 }
 

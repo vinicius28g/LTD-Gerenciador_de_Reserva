@@ -30,6 +30,8 @@ public class Configuracao {
                 .permitAll()
                 .requestMatchers(HttpMethod.POST, "/home/validarToken")
                 .permitAll()
+                .requestMatchers(HttpMethod.POST, "/home/usuario")
+                .permitAll()
                 .anyRequest().authenticated().and()
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
 //                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())

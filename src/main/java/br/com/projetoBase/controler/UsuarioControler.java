@@ -1,14 +1,6 @@
 package br.com.projetoBase.controler;
 
-import br.com.projetoBase.Service.UsuarioService;
-import br.com.projetoBase.configuracoes.TokenService;
-import br.com.projetoBase.dto.Login;
-import br.com.projetoBase.dto.UsuarioCadastro;
-import br.com.projetoBase.dto.UsuarioRetorno;
-import br.com.projetoBase.modelo.Usuario;
-import br.com.projetoBase.repositorio.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,7 +9,24 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import br.com.projetoBase.Service.UsuarioService;
+import br.com.projetoBase.configuracoes.TokenService;
+import br.com.projetoBase.dto.Login;
+import br.com.projetoBase.dto.UsuarioCadastro;
+import br.com.projetoBase.dto.UsuarioRetorno;
+import br.com.projetoBase.modelo.Endereco;
+import br.com.projetoBase.modelo.Pessoa;
+import br.com.projetoBase.modelo.Usuario;
+import br.com.projetoBase.repositorio.EnderecoRepositorio;
+import br.com.projetoBase.repositorio.PessoaRepositorio;
+import br.com.projetoBase.repositorio.UsuarioRepositorio;
 
 @RestController
 @RequestMapping("/home")
@@ -37,6 +46,10 @@ public class UsuarioControler {
     private TokenService tokenService;
     @Autowired
     private UsuarioService usuarioService;
+    @Autowired
+    private PessoaRepositorio pessoaRepositorio;
+    @Autowired
+    private EnderecoRepositorio  enderecoRepositorio;
     
 
     @GetMapping("/teste")
@@ -57,7 +70,7 @@ public class UsuarioControler {
             var usuario = (Usuario) authenticate.getPrincipal();
 
             UsuarioRetorno usuarioRetorno = new UsuarioRetorno(
-                    usuario.getNome(),
+                    usuario.getPessoa().getNomeCompleto(),
                     usuario.getTipoUsuario(),
                     tokenService.gerarToken(usuario)
             );
@@ -72,11 +85,16 @@ public class UsuarioControler {
     public ResponseEntity<?> salvar(@RequestBody UsuarioCadastro usuarioCadastro){
 
         Usuario usuario = new Usuario();
+       
+        Pessoa pessoa = new Pessoa();
         usuario.setTipoUsuario(usuarioCadastro.tipoUsuario());
-        usuario.setNome(usuarioCadastro.nome());
         usuario.setUser(usuarioCadastro.user());
         usuario.setPass(new BCryptPasswordEncoder().encode(usuarioCadastro.pass()));
         
+        pessoa.setNomeCompleto(usuarioCadastro.nome());
+               
+        usuario.setPessoa(pessoa);
+        pessoaRepositorio.save(pessoa);
         Usuario usuarioSalvo = usuarioService.salvar(usuario);
 
         return new ResponseEntity<>(usuarioSalvo, HttpStatus.CREATED);
@@ -98,7 +116,7 @@ public class UsuarioControler {
     @GetMapping("/carregarUser")
     public ResponseEntity<?> carregarUser(@AuthenticationPrincipal Usuario usuario){
         UsuarioRetorno usuarioRetorno = new UsuarioRetorno(
-                usuario.getNome(),
+                usuario.getPessoa().getNomeCompleto(),
                 usuario.getTipoUsuario(),
                 tokenService.gerarToken(usuario)
         );
