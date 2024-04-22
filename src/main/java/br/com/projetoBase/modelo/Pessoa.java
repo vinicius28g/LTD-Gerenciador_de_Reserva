@@ -16,7 +16,7 @@ import jakarta.validation.constraints.NotNull;
 public class Pessoa extends EntidadeAbstrata{
 	
 	@NotNull
-	private String NomeCompleto;
+	private String nomeCompleto;
 	@Email(message = "email Invalido")
 	private String email;
 	@Temporal(TemporalType.DATE)
@@ -29,10 +29,10 @@ public class Pessoa extends EntidadeAbstrata{
 	
 	
 	public String getNomeCompleto() {
-		return NomeCompleto;
+		return nomeCompleto;
 	}
 	public void setNomeCompleto(String nomeCompleto) {
-		NomeCompleto = nomeCompleto;
+		this.nomeCompleto = nomeCompleto;
 	}
 	public String getEmail() {
 		return email;

@@ -19,10 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.projetoBase.Service.UsuarioService;
 import br.com.projetoBase.configuracoes.TokenService;
 import br.com.projetoBase.dto.Login;
+import br.com.projetoBase.dto.TipoUsuarioDto;
 import br.com.projetoBase.dto.UsuarioCadastro;
 import br.com.projetoBase.dto.UsuarioRetorno;
 import br.com.projetoBase.modelo.Endereco;
 import br.com.projetoBase.modelo.Pessoa;
+import br.com.projetoBase.modelo.TipoUsuario;
 import br.com.projetoBase.modelo.Usuario;
 import br.com.projetoBase.repositorio.EnderecoRepositorio;
 import br.com.projetoBase.repositorio.PessoaRepositorio;
@@ -48,8 +50,6 @@ public class UsuarioControler {
     private UsuarioService usuarioService;
     @Autowired
     private PessoaRepositorio pessoaRepositorio;
-    @Autowired
-    private EnderecoRepositorio  enderecoRepositorio;
     
 
     @GetMapping("/teste")
@@ -80,6 +80,9 @@ public class UsuarioControler {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+    /*quando um usuario é criado ele é automaticmanete um paciente, posteriomente
+     * posteriomente um adm muda o perfil dele para o desejado
+     */
     @Transactional
     @PostMapping("/usuario")
     public ResponseEntity<?> salvar(@RequestBody UsuarioCadastro usuarioCadastro){
@@ -87,7 +90,7 @@ public class UsuarioControler {
         Usuario usuario = new Usuario();
        
         Pessoa pessoa = new Pessoa();
-        usuario.setTipoUsuario(usuarioCadastro.tipoUsuario());
+        usuario.setTipoUsuario(TipoUsuario.PACIENTE);
         usuario.setUser(usuarioCadastro.user());
         usuario.setPass(new BCryptPasswordEncoder().encode(usuarioCadastro.pass()));
         
@@ -98,6 +101,14 @@ public class UsuarioControler {
         Usuario usuarioSalvo = usuarioService.salvar(usuario);
 
         return new ResponseEntity<>(usuarioSalvo, HttpStatus.CREATED);
+    }
+    
+    @PostMapping("/alterarTipoUsuario")
+    public ResponseEntity<?> alterarTipoUser(@RequestBody TipoUsuarioDto tipoUsuarioDto){
+    	Pessoa pessoa = pessoaRepositorio.findByNomeCompleto(tipoUsuarioDto.nomePessoa());
+    	
+    	return null;
+    	
     }
 
 //    @PostMapping("/professor/{offset}/{pageSize}")
