@@ -111,19 +111,6 @@ public class UsuarioControler {
     	
     }
 
-//    @PostMapping("/professor/{offset}/{pageSize}")
-//    public ResponseEntity<?> listar(@PathVariable int offset,
-//                                    @PathVariable int pageSize){
-//
-//        Specification<Usuario> usuarioSpecification = ((root, query, criteriaBuilder) ->
-//                criteriaBuilder.equal(root.get("tipoUsuario"), TipoUsuario.USER));
-//
-//        return new ResponseEntity<>(usuarioRepositorio.findAll(
-//                usuarioSpecification,
-//                PageRequest.of(offset,pageSize)),
-//                HttpStatus.OK);
-//
-//    }
     @GetMapping("/carregarUser")
     public ResponseEntity<?> carregarUser(@AuthenticationPrincipal Usuario usuario){
         UsuarioRetorno usuarioRetorno = new UsuarioRetorno(
