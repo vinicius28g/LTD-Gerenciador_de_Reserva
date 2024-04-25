@@ -1,14 +1,6 @@
 package br.com.projetoBase.controler;
 
-import br.com.projetoBase.Service.UsuarioService;
-import br.com.projetoBase.configuracoes.TokenService;
-import br.com.projetoBase.dto.Login;
-import br.com.projetoBase.dto.UsuarioCadastro;
-import br.com.projetoBase.dto.UsuarioRetorno;
-import br.com.projetoBase.modelo.Usuario;
-import br.com.projetoBase.repositorio.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,7 +9,26 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import br.com.projetoBase.Service.UsuarioService;
+import br.com.projetoBase.configuracoes.TokenService;
+import br.com.projetoBase.dto.Login;
+import br.com.projetoBase.dto.TipoUsuarioDto;
+import br.com.projetoBase.dto.UsuarioCadastro;
+import br.com.projetoBase.dto.UsuarioRetorno;
+import br.com.projetoBase.modelo.Endereco;
+import br.com.projetoBase.modelo.Pessoa;
+import br.com.projetoBase.modelo.TipoUsuario;
+import br.com.projetoBase.modelo.Usuario;
+import br.com.projetoBase.repositorio.EnderecoRepositorio;
+import br.com.projetoBase.repositorio.PessoaRepositorio;
+import br.com.projetoBase.repositorio.UsuarioRepositorio;
 
 @RestController
 @RequestMapping("/home")
@@ -37,6 +48,8 @@ public class UsuarioControler {
     private TokenService tokenService;
     @Autowired
     private UsuarioService usuarioService;
+    @Autowired
+    private PessoaRepositorio pessoaRepositorio;
     
 
     @GetMapping("/teste")
@@ -57,7 +70,7 @@ public class UsuarioControler {
             var usuario = (Usuario) authenticate.getPrincipal();
 
             UsuarioRetorno usuarioRetorno = new UsuarioRetorno(
-                    usuario.getNome(),
+                    usuario.getPessoa().getNomeCompleto(),
                     usuario.getTipoUsuario(),
                     tokenService.gerarToken(usuario)
             );
@@ -67,38 +80,41 @@ public class UsuarioControler {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+    /*quando um usuario é criado ele é automaticmanete um paciente, posteriomente
+     * posteriomente um adm muda o perfil dele para o desejado
+     */
     @Transactional
     @PostMapping("/usuario")
     public ResponseEntity<?> salvar(@RequestBody UsuarioCadastro usuarioCadastro){
 
         Usuario usuario = new Usuario();
-        usuario.setTipoUsuario(usuarioCadastro.tipoUsuario());
-        usuario.setNome(usuarioCadastro.nome());
+       
+        Pessoa pessoa = new Pessoa();
+        usuario.setTipoUsuario(TipoUsuario.PACIENTE);
         usuario.setUser(usuarioCadastro.user());
         usuario.setPass(new BCryptPasswordEncoder().encode(usuarioCadastro.pass()));
         
+        pessoa.setNomeCompleto(usuarioCadastro.nome());
+               
+        usuario.setPessoa(pessoa);
+        pessoaRepositorio.save(pessoa);
         Usuario usuarioSalvo = usuarioService.salvar(usuario);
 
         return new ResponseEntity<>(usuarioSalvo, HttpStatus.CREATED);
     }
+    
+    @PostMapping("/alterarTipoUsuario")
+    public ResponseEntity<?> alterarTipoUser(@RequestBody TipoUsuarioDto tipoUsuarioDto){
+    	Pessoa pessoa = pessoaRepositorio.findByNomeCompleto(tipoUsuarioDto.nomePessoa());
+    	
+    	return null;
+    	
+    }
 
-//    @PostMapping("/professor/{offset}/{pageSize}")
-//    public ResponseEntity<?> listar(@PathVariable int offset,
-//                                    @PathVariable int pageSize){
-//
-//        Specification<Usuario> usuarioSpecification = ((root, query, criteriaBuilder) ->
-//                criteriaBuilder.equal(root.get("tipoUsuario"), TipoUsuario.USER));
-//
-//        return new ResponseEntity<>(usuarioRepositorio.findAll(
-//                usuarioSpecification,
-//                PageRequest.of(offset,pageSize)),
-//                HttpStatus.OK);
-//
-//    }
     @GetMapping("/carregarUser")
     public ResponseEntity<?> carregarUser(@AuthenticationPrincipal Usuario usuario){
         UsuarioRetorno usuarioRetorno = new UsuarioRetorno(
-                usuario.getNome(),
+                usuario.getPessoa().getNomeCompleto(),
                 usuario.getTipoUsuario(),
                 tokenService.gerarToken(usuario)
         );

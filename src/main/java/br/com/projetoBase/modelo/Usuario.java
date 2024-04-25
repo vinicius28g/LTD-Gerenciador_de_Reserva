@@ -1,6 +1,7 @@
 package br.com.projetoBase.modelo;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,9 +14,6 @@ import java.util.List;
 public class Usuario extends EntidadeAbstrata implements UserDetails {
 
     @NotNull
-    private String nome;
-
-    @NotNull
     private String user;
 
     @NotNull
@@ -23,6 +21,9 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
 
     @NotNull
     private TipoUsuario tipoUsuario;
+    @OneToOne
+    @NotNull
+    private Pessoa pessoa;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -59,13 +60,6 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
         return true;
     }
 
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
 
     public String getUser() {
         return user;
@@ -90,4 +84,15 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
     public void setTipoUsuario(TipoUsuario tipoUsuario) {
         this.tipoUsuario = tipoUsuario;
     }
+
+	public Pessoa getPessoa() {
+		return pessoa;
+	}
+
+	public void setPessoa(Pessoa pessoa) {
+		this.pessoa = pessoa;
+	}
+    
+    
+    
 }

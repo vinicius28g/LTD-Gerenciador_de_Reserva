@@ -1,15 +1,12 @@
+
 package br.com.projetoBase.repositorio;
 
-import br.com.projetoBase.modelo.Usuario;
+import br.com.projetoBase.modelo.Clinica;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 
-public interface UsuarioRepositorio extends JpaRepository<Usuario, Long>{
-
-    Usuario findByUser(String nome);
+public interface ClinicaRepositorio extends JpaRepository<Clinica, Long>,
+        JpaSpecificationExecutor<Clinica>, CrudRepository<Clinica, Long>{
     
-//    Usuario save(Usuario usuario);
-
 }
-

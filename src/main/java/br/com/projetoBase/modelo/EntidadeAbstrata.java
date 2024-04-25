@@ -25,8 +25,9 @@ public abstract class EntidadeAbstrata {
     public int hashCode() {
         return Objects.hash(id);
     }
+    
 
-    public Long getId() {
+	public Long getId() {
         return id;
     }
 
