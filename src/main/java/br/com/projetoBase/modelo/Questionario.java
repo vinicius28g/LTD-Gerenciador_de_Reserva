@@ -28,15 +28,15 @@ public class Questionario extends EntidadeAbstrata{
 	private String expectativas;
 	private String obeservacao;
 	
-	@ManyToOne
-	private UsuarioPaciente usuariopaciente;
-	
-	public UsuarioPaciente getUsuariopaciente() {
-		return usuariopaciente;
-	}
-	public void setUsuariopaciente(UsuarioPaciente usuariopaciente) {
-		this.usuariopaciente = usuariopaciente;
-	}
+//	@ManyToOne
+//	private UsuarioPaciente usuariopaciente;
+//	
+//	public UsuarioPaciente getUsuariopaciente() {
+//		return usuariopaciente;
+//	}
+//	public void setUsuariopaciente(UsuarioPaciente usuariopaciente) {
+//		this.usuariopaciente = usuariopaciente;
+//	}
 	public String getSituacaoAtual() {
 		return situacaoAtual;
 	}

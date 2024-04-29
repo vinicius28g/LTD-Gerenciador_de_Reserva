@@ -27,7 +27,17 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ADMIN"));
+    	switch (tipoUsuario.getCodigo()) {
+		case 1: {
+			return List.of(new SimpleGrantedAuthority(TipoUsuario.ADMIN.getNome()), new SimpleGrantedAuthority(TipoUsuario.PACIENTE.getNome()));
+		}
+		case 2: {
+			return List.of(new SimpleGrantedAuthority(TipoUsuario.PACIENTE.name()));
+		}
+		default:
+			throw new IllegalArgumentException("Unexpected value: " + tipoUsuario.getCodigo());
+		}
+        
     }
 
     @Override

@@ -2,6 +2,8 @@ package br.com.projetoBase.modelo;
 
 import org.apache.catalina.User;
 
+import br.com.projetoBase.Constates.ConstantesSistema;
+
 public enum TipoUsuario {
 
     ADMIN("Admin", 1, User.class),
@@ -21,7 +23,16 @@ public enum TipoUsuario {
         return nome;
     }
     public int getCodigo() {
-    	return codigo;
+        return codigo;
+    }
+    public static TipoUsuario getTipo(int codigo) {
+    	for (TipoUsuario tipo : TipoUsuario.values()) {
+            if (tipo.codigo == codigo) {
+                return tipo;
+            }
+        }
+        throw new IllegalArgumentException(ConstantesSistema.ENUM_INVALIDO);
+    	
     }
 
 	public Class<?> getClasse() {
@@ -30,4 +41,3 @@ public enum TipoUsuario {
     
 
 }
-;

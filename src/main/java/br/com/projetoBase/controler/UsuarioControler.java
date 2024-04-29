@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -80,17 +81,18 @@ public class UsuarioControler {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    /*quando um usuario é criado ele é automaticmanete um paciente, posteriomente
-     * posteriomente um adm muda o perfil dele para o desejado
-     */
+
     @Transactional
     @PostMapping("/usuario")
     public ResponseEntity<?> salvar(@RequestBody UsuarioCadastro usuarioCadastro){
-
+    	
+    	if(pegarUsuario()!= TipoUsuario.ADMIN) {
+    		return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    	}
         Usuario usuario = new Usuario();
        
         Pessoa pessoa = new Pessoa();
-        usuario.setTipoUsuario(TipoUsuario.PACIENTE);
+        usuario.setTipoUsuario(TipoUsuario.ADMIN);
         usuario.setUser(usuarioCadastro.user());
         usuario.setPass(new BCryptPasswordEncoder().encode(usuarioCadastro.pass()));
         
@@ -99,15 +101,29 @@ public class UsuarioControler {
         usuario.setPessoa(pessoa);
         pessoaRepositorio.save(pessoa);
         Usuario usuarioSalvo = usuarioService.salvar(usuario);
-
+        
         return new ResponseEntity<>(usuarioSalvo, HttpStatus.CREATED);
     }
     
     @PostMapping("/alterarTipoUsuario")
     public ResponseEntity<?> alterarTipoUser(@RequestBody TipoUsuarioDto tipoUsuarioDto){
-    	Pessoa pessoa = pessoaRepositorio.findByNomeCompleto(tipoUsuarioDto.nomePessoa());
-    	
-    	return null;
+    	//obtem a autenticação do usuario logado
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    
+//        Pessoa pessoa = pessoaRepositorio.findByNomeCompleto(tipoUsuarioDto.nomePessoa());
+        TipoUsuario tipoUsuario = TipoUsuario.getTipo(tipoUsuarioDto.tipoUsuario()); 
+        
+        // verifica se o usuario estar realemnte autenticado
+    	if (authentication != null && authentication.isAuthenticated()) {
+             Usuario usuarioLogado = (Usuario) authentication.getPrincipal();
+             if(usuarioLogado.getTipoUsuario()== TipoUsuario.ADMIN){
+            	 Usuario novoUsuario = usuarioService.buscarPorId(tipoUsuarioDto.usuarioId());
+            	 novoUsuario.setTipoUsuario(tipoUsuario);
+            	 usuarioRepositorio.save(novoUsuario);
+            	 return new ResponseEntity<>(novoUsuario, HttpStatus.OK);
+             }
+        } 
+    	return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     	
     }
 
@@ -125,6 +141,16 @@ public class UsuarioControler {
     	System.out.println(numero);
     	return new ResponseEntity<>(HttpStatus.OK);
     }
+    
+    public TipoUsuario pegarUsuario() {
+    	//obtem a autenticação do usuario logado
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    	if (authentication != null && authentication.isAuthenticated()) {
+    		Usuario usuarioLogado = (Usuario) authentication.getPrincipal();
+    		return usuarioLogado.getTipoUsuario();
+    	}
+    	return null;
+	}
    
 
 }
