@@ -39,3 +39,6 @@ build/
 
 ### aplications.propetes ###
 application.properties
+
+### chave do banco ###
+ltd-chaves.pem
