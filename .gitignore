@@ -37,8 +37,8 @@ build/
 ### Mac OS ###
 .DS_Store
 
-
+### aplications.propetes ###
+application.properties
 
 ### chave do banco ###
 ltd-chaves.pem
-
