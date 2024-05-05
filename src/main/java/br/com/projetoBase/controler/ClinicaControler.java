@@ -32,12 +32,12 @@ public class ClinicaControler {
         this.clinicaRepositorio = clinicaRepositorio;
     }
     
-    @GetMapping()
+    @GetMapping("/listar")
     public ResponseEntity<?> listar(){
        return new ResponseEntity<>(clinicaRepositorio.findAll(),
                 HttpStatus.OK);
     }
-    @PostMapping()
+    @PostMapping("/salvar")
     public ResponseEntity<?> salvar(@RequestBody Clinica clinica){
        return new ResponseEntity<>(clinicaRepositorio.save(clinica),
                 HttpStatus.OK);

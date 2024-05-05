@@ -40,7 +40,7 @@ public class PacienteControler {
 	 @GetMapping("/listAll")
 	    public ResponseEntity<?> listar(){
 	       return new ResponseEntity<>(pacienteRepositorio.findAll(),
-	                HttpStatus.OK);
+	               HttpStatus.OK);
 	    }
 	 
 	 @PostMapping("/salvar")
