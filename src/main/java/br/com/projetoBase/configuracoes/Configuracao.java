@@ -1,5 +1,6 @@
 package br.com.projetoBase.configuracoes;
 
+import br.com.projetoBase.modelo.TipoUsuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +30,7 @@ public class Configuracao {
                 .requestMatchers(HttpMethod.POST, "/home/login").permitAll()
                 .requestMatchers(HttpMethod.POST, "/home/validarToken").permitAll()
                 .requestMatchers(HttpMethod.POST, "/home/paciente/salvar").permitAll()
+                .requestMatchers(HttpMethod.POST, "/home/aluno/salvar").hasAnyAuthority(TipoUsuario.ADMIN.toString())//????oq eu faço aqui
                 .anyRequest().authenticated().and()
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
 //                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())

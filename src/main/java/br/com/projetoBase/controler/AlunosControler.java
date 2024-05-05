@@ -6,7 +6,6 @@ package br.com.projetoBase.controler;
 
 import br.com.projetoBase.Service.UsuarioService;
 import br.com.projetoBase.dto.CadastroAluno;
-import br.com.projetoBase.dto.CadastroPaciente;
 import br.com.projetoBase.dto.RetornoAluno;
 import br.com.projetoBase.modelo.Aluno;
 import br.com.projetoBase.modelo.Pessoa;
