@@ -3,12 +3,18 @@ package br.com.projetoBase.modelo;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
+
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
+
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 public class Usuario extends EntidadeAbstrata implements UserDetails {
@@ -21,17 +27,33 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
 
     @NotNull
     private TipoUsuario tipoUsuario;
-    @OneToOne
-    @NotNull
-    private Pessoa pessoa;
 
+    @NotNull
+	private String nomeCompleto;
+    
+    private String telefone;
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	private Date dataNascimento;
+    
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
     	switch (tipoUsuario.getCodigo()) {
 		case 1: {
-			return List.of(new SimpleGrantedAuthority(TipoUsuario.ADMIN.getNome()), new SimpleGrantedAuthority(TipoUsuario.PACIENTE.getNome()));
+			return List.of(new SimpleGrantedAuthority(TipoUsuario.ADMIN.getNome()), 
+					new SimpleGrantedAuthority(TipoUsuario.PROFESSOR.getNome()),
+					new SimpleGrantedAuthority(TipoUsuario.ESTAGIARIO.getNome()),
+					new SimpleGrantedAuthority(TipoUsuario.PACIENTE.getNome()));
 		}
 		case 2: {
+			return List.of(new SimpleGrantedAuthority(TipoUsuario.PROFESSOR.name()),
+					new SimpleGrantedAuthority(TipoUsuario.ESTAGIARIO.getNome()),
+					new SimpleGrantedAuthority(TipoUsuario.PACIENTE.getNome()));
+		}
+		case 3: {
+			return List.of(new SimpleGrantedAuthority(TipoUsuario.ESTAGIARIO.getNome()),
+					new SimpleGrantedAuthority(TipoUsuario.PACIENTE.getNome()));
+		}case 4: {
 			return List.of(new SimpleGrantedAuthority(TipoUsuario.PACIENTE.name()));
 		}
 		default:
@@ -95,13 +117,31 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
         this.tipoUsuario = tipoUsuario;
     }
 
-	public Pessoa getPessoa() {
-		return pessoa;
+	public String getNomeCompleto() {
+		return nomeCompleto;
 	}
 
-	public void setPessoa(Pessoa pessoa) {
-		this.pessoa = pessoa;
+	public void setNomeCompleto(String nomeCompleto) {
+		this.nomeCompleto = nomeCompleto;
 	}
+
+	public String getTelefone() {
+		return telefone;
+	}
+
+	public void setTelefone(String telefone) {
+		this.telefone = telefone;
+	}
+
+	public Date getDataNascimento() {
+		return dataNascimento;
+	}
+
+	public void setDataNascimento(Date dataNascimento) {
+		this.dataNascimento = dataNascimento;
+	}
+
+    
     
     
     
