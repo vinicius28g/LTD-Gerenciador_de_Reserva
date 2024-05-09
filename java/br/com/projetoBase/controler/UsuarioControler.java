@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -128,7 +129,7 @@ public class UsuarioControler {
     	return usuarioService.listAll(TipoUsuario.PROFESSOR);
     }
     
-    @GetMapping("/listAll/estagiarrio")
+    @GetMapping("/listAll/estagiario")
     public ResponseEntity<?> listAllEstagiario(){
     	return usuarioService.listAll(TipoUsuario.ESTAGIARIO);
     }
@@ -142,7 +143,8 @@ public class UsuarioControler {
      * get generico pos qualquer pessoa pode ver os usuario já que não vao modificar nada
      * apenas ver as informações basicas. 
      */
-    public ResponseEntity<?> getUsuario(@RequestBody long id){
+    @GetMapping("/getUsuario{id}")
+    public ResponseEntity<?> getUsuario(@PathVariable Long id){
     	Usuario usuario = new Usuario();
     	usuario = usuarioService.buscarPorId(id);
     	RetornoUsuario retorno = new RetornoUsuario(
