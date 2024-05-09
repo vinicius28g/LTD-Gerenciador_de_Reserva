@@ -14,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import br.com.projetoBase.modelo.TipoUsuario;
+
 @Configuration
 @EnableWebSecurity
 public class Configuracao {
@@ -28,7 +30,15 @@ public class Configuracao {
                 .and().authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST, "/home/login").permitAll()
                 .requestMatchers(HttpMethod.POST, "/home/validarToken").permitAll()
-                .requestMatchers(HttpMethod.POST, "/home/paciente/salvar").permitAll()
+                .requestMatchers(HttpMethod.POST, "/home/salvar/paciente").permitAll()
+                .requestMatchers(HttpMethod.POST, "/home/salvar/usuario").hasAnyAuthority(TipoUsuario.ADMIN.getNome())
+                .requestMatchers(HttpMethod.POST, "/home/salvar/professor").hasAnyAuthority(TipoUsuario.ADMIN.getNome())
+                .requestMatchers(HttpMethod.POST, "/home/salvar/estagiario").hasAnyAuthority(TipoUsuario.PROFESSOR.getNome())
+                //----------------------------------- editar ------------------------------
+                .requestMatchers(HttpMethod.PUT, "/home/editar/paciente").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/home/editar/usuario").hasAnyAuthority(TipoUsuario.ADMIN.getNome())
+                .requestMatchers(HttpMethod.PUT, "/home/editar/professor").hasAnyAuthority(TipoUsuario.ADMIN.getNome())
+                .requestMatchers(HttpMethod.PUT, "/home/editar/estagiario").hasAnyAuthority(TipoUsuario.PROFESSOR.getNome())
                 .anyRequest().authenticated().and()
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
 //                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())

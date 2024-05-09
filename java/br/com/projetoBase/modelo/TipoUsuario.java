@@ -6,17 +6,18 @@ import br.com.projetoBase.Constates.ConstantesSistema;
 
 public enum TipoUsuario {
 
-    ADMIN("Admin", 1, User.class),
-    PACIENTE("Paciente", 2, Paciente.class );
+    ADMIN("Admin", 1),
+	PROFESSOR("Professor", 2),
+	ESTAGIARIO("Estagiario", 3),
+	PACIENTE("Paciente",4);
 
     private final String nome;
     private final int codigo;
-    private final Class<?> classe;
+  
 
-    TipoUsuario(String nome, int codigo, Class<?> classe) {
+    TipoUsuario(String nome, int codigo) {
         this.nome = nome;
         this.codigo = codigo;
-        this.classe = classe;
     }
 
     public String getNome() {
@@ -34,10 +35,4 @@ public enum TipoUsuario {
         throw new IllegalArgumentException(ConstantesSistema.ENUM_INVALIDO);
     	
     }
-
-	public Class<?> getClasse() {
-		return classe;
-	}
-    
-
 }
