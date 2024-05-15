@@ -1,6 +1,8 @@
 package br.com.projetoBase.modelo;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 
@@ -20,6 +22,7 @@ import javax.persistence.TemporalType;
 public class Usuario extends EntidadeAbstrata implements UserDetails {
 
     @NotNull
+    @Column(unique = true)
     private String user;
 
     @NotNull
@@ -35,23 +38,25 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date dataNascimento;
+	@ManyToOne
+	private Clinica clinica;
     
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
     	switch (tipoUsuario.getCodigo()) {
 		case 1: {
 			return List.of(new SimpleGrantedAuthority(TipoUsuario.ADMIN.getNome()), 
-					new SimpleGrantedAuthority(TipoUsuario.PROFESSOR.getNome()),
-					new SimpleGrantedAuthority(TipoUsuario.ESTAGIARIO.getNome()),
+					new SimpleGrantedAuthority(TipoUsuario.COORDENADOR.getNome()),
+					new SimpleGrantedAuthority(TipoUsuario.FUNCIONARIO.getNome()),
 					new SimpleGrantedAuthority(TipoUsuario.PACIENTE.getNome()));
 		}
 		case 2: {
-			return List.of(new SimpleGrantedAuthority(TipoUsuario.PROFESSOR.name()),
-					new SimpleGrantedAuthority(TipoUsuario.ESTAGIARIO.getNome()),
+			return List.of(new SimpleGrantedAuthority(TipoUsuario.COORDENADOR.name()),
+					new SimpleGrantedAuthority(TipoUsuario.FUNCIONARIO.getNome()),
 					new SimpleGrantedAuthority(TipoUsuario.PACIENTE.getNome()));
 		}
 		case 3: {
-			return List.of(new SimpleGrantedAuthority(TipoUsuario.ESTAGIARIO.getNome()),
+			return List.of(new SimpleGrantedAuthority(TipoUsuario.FUNCIONARIO.getNome()),
 					new SimpleGrantedAuthority(TipoUsuario.PACIENTE.getNome()));
 		}case 4: {
 			return List.of(new SimpleGrantedAuthority(TipoUsuario.PACIENTE.name()));
@@ -135,6 +140,15 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
 
 	public Date getDataNascimento() {
 		return dataNascimento;
+	}
+	
+
+	public Clinica getClinica() {
+		return clinica;
+	}
+
+	public void setClinica(Clinica clinica) {
+		this.clinica = clinica;
 	}
 
 	public void setDataNascimento(Date dataNascimento) {

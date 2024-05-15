@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.projetoBase.Service.UsuarioService;
 import br.com.projetoBase.configuracoes.TokenService;
+import br.com.projetoBase.dto.FuncCordeCadastro;
 import br.com.projetoBase.dto.Login;
 import br.com.projetoBase.dto.UsuarioCadastro;
 import br.com.projetoBase.dto.RetornoLogin;
@@ -76,15 +77,15 @@ public class UsuarioControler {
     }
     
     @Transactional
-    @PostMapping("/salvar/professor")
-    public ResponseEntity<?> salvarPorfessor(@RequestBody UsuarioCadastro usuarioCadastro){
-    	return usuarioService.salvar(usuarioCadastro, TipoUsuario.PROFESSOR);
+    @PostMapping("/salvar/coordenador")
+    public ResponseEntity<?> salvarCoordenador(@RequestBody FuncCordeCadastro usuarioCadastro){
+    	return usuarioService.salvarFuncCord(usuarioCadastro, TipoUsuario.COORDENADOR);
     }
     
     @Transactional
-    @PostMapping("/salvar/estagiario")
-    public ResponseEntity<?> salvarEstagiario(@RequestBody UsuarioCadastro usuarioCadastro){
-    	return usuarioService.salvar(usuarioCadastro, TipoUsuario.ESTAGIARIO);
+    @PostMapping("/salvar/funcionario")
+    public ResponseEntity<?> salvarFuncionario(@RequestBody FuncCordeCadastro usuarioCadastro){
+    	return usuarioService.salvarFuncCord(usuarioCadastro, TipoUsuario.FUNCIONARIO);
     }
     
     @Transactional
@@ -103,13 +104,13 @@ public class UsuarioControler {
     @Transactional
     @PutMapping("/editar/professor")
     public ResponseEntity<?> editarPorfessor(@RequestBody UsuarioCadastro usuarioCadastro){
-    	return usuarioService.editar(usuarioCadastro, TipoUsuario.PROFESSOR);
+    	return usuarioService.editar(usuarioCadastro, TipoUsuario.COORDENADOR);
     }
     
     @Transactional
     @PutMapping("/editar/estagiario")
     public ResponseEntity<?> editarEstagiario(@RequestBody UsuarioCadastro usuarioCadastro){
-    	return usuarioService.editar(usuarioCadastro, TipoUsuario.ESTAGIARIO);
+    	return usuarioService.editar(usuarioCadastro, TipoUsuario.FUNCIONARIO);
     }
     
     @Transactional
@@ -126,12 +127,12 @@ public class UsuarioControler {
     
     @GetMapping("/listAll/professor")
     public ResponseEntity<?> listAllProfessor(){
-    	return usuarioService.listAll(TipoUsuario.PROFESSOR);
+    	return usuarioService.listAll(TipoUsuario.COORDENADOR);
     }
     
     @GetMapping("/listAll/estagiario")
     public ResponseEntity<?> listAllEstagiario(){
-    	return usuarioService.listAll(TipoUsuario.ESTAGIARIO);
+    	return usuarioService.listAll(TipoUsuario.FUNCIONARIO);
     }
     
     @GetMapping("/listAll/paciente")

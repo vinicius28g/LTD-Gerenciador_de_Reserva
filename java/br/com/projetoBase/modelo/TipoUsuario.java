@@ -7,8 +7,8 @@ import br.com.projetoBase.Constates.ConstantesSistema;
 public enum TipoUsuario {
 
     ADMIN("Admin", 1),
-	PROFESSOR("Professor", 2),
-	ESTAGIARIO("Estagiario", 3),
+	COORDENADOR("Coordenador", 2),
+	FUNCIONARIO("Funcionario", 3),
 	PACIENTE("Paciente",4);
 
     private final String nome;

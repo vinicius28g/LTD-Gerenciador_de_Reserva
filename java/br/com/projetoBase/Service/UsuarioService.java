@@ -10,10 +10,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import br.com.projetoBase.dto.FuncCordeCadastro;
 import br.com.projetoBase.dto.RetornoUsuario;
 import br.com.projetoBase.dto.UsuarioCadastro;
+import br.com.projetoBase.modelo.Clinica;
 import br.com.projetoBase.modelo.TipoUsuario;
 import br.com.projetoBase.modelo.Usuario;
+import br.com.projetoBase.repositorio.ClinicaRepositorio;
 import br.com.projetoBase.repositorio.UsuarioRepositorio;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -22,11 +25,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class UsuarioService {
 	@Autowired
 	private UsuarioRepositorio usuarioRepositorio;
+	@Autowired
+	private ClinicaRepositorio clinicaRepositorio;
 	
 	@Transactional
 	public Usuario salvar(Usuario usuario) {
 		return usuarioRepositorio.save(usuario);
 	}
+	
 	@Transactional
 	public Usuario buscarPorId(long id) {
 		Optional<Usuario> usuario =usuarioRepositorio.findById(id);
@@ -51,6 +57,27 @@ public class UsuarioService {
         
         return new ResponseEntity<>(usuario, HttpStatus.CREATED);
 	    }
+	  
+	  public ResponseEntity<?> salvarFuncCord(FuncCordeCadastro usuarioCadastro, TipoUsuario tipo){
+		  
+		  if(usuarioRepositorio.findByUser(usuarioCadastro.user())!= null) {
+			  return new ResponseEntity<>("Usuario já existente", HttpStatus.CONFLICT);
+		  }
+	        Usuario usuario = new Usuario();
+	        Clinica clinica = new Clinica();
+	        clinica = clinicaRepositorio.findById(usuarioCadastro.clinicaId()).get();
+	        usuario.setClinica(clinica);
+	        usuario.setNomeCompleto(usuarioCadastro.nome());
+	        usuario.setTelefone(usuarioCadastro.telefone());
+	        usuario.setDataNascimento(usuarioCadastro.DataNascimento());
+	        usuario.setTipoUsuario(tipo);
+	        usuario.setUser(usuarioCadastro.user());
+	        usuario.setPass(new BCryptPasswordEncoder().encode(usuarioCadastro.pass()));
+	        
+	        this.salvar(usuario);
+	        
+	        return new ResponseEntity<>(usuario, HttpStatus.CREATED);
+		    }
 	  
 	  public ResponseEntity<?> editar(UsuarioCadastro usuarioCadastro, TipoUsuario tipo){
 		  
