@@ -1,6 +1,5 @@
 package br.com.projetoBase.configuracoes;
 
-import br.com.projetoBase.modelo.TipoUsuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +13,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import br.com.projetoBase.modelo.TipoUsuario;
 
 @Configuration
 @EnableWebSecurity
@@ -29,18 +30,15 @@ public class Configuracao {
                 .and().authorizeHttpRequests()
                 .requestMatchers(HttpMethod.POST, "/home/login").permitAll()
                 .requestMatchers(HttpMethod.POST, "/home/validarToken").permitAll()
-                .requestMatchers(HttpMethod.POST, "/home/paciente/salvar").permitAll()
-                .requestMatchers(HttpMethod.POST, "/home/clinica/salvar").permitAll()
-                .requestMatchers(HttpMethod.POST, "/home/clinica/listar").permitAll()
-                .requestMatchers(HttpMethod.POST, "/home/usuario").permitAll()
-                .requestMatchers(HttpMethod.POST, "/home/consulta/salvar").permitAll()
-                .requestMatchers(HttpMethod.GET, "/home/consulta/listar").permitAll()
-                .requestMatchers(HttpMethod.GET, "/home/consulta/por-clinica").permitAll()
-                .requestMatchers(HttpMethod.PUT, "/home/consulta/agendar").permitAll()
-                .requestMatchers(HttpMethod.DELETE, "/home/consulta/deletar").permitAll()
-                .requestMatchers(HttpMethod.PUT, "/home/consulta/info").permitAll()
-                .requestMatchers(HttpMethod.GET, "/home/consulta/listarByDay").permitAll()
-                .requestMatchers(HttpMethod.GET, "/home/consulta/listarByPaciente").permitAll()
+                .requestMatchers(HttpMethod.POST, "/home/salvar/paciente").permitAll()
+                .requestMatchers(HttpMethod.POST, "/home/salvar/usuario").hasAnyAuthority(TipoUsuario.ADMIN.getNome())
+                .requestMatchers(HttpMethod.POST, "/home/salvar/professor").hasAnyAuthority(TipoUsuario.ADMIN.getNome())
+                .requestMatchers(HttpMethod.POST, "/home/salvar/estagiario").hasAnyAuthority(TipoUsuario.PROFESSOR.getNome())
+                //----------------------------------- editar ------------------------------
+                .requestMatchers(HttpMethod.PUT, "/home/editar/paciente").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/home/editar/usuario").hasAnyAuthority(TipoUsuario.ADMIN.getNome())
+                .requestMatchers(HttpMethod.PUT, "/home/editar/professor").hasAnyAuthority(TipoUsuario.ADMIN.getNome())
+                .requestMatchers(HttpMethod.PUT, "/home/editar/estagiario").hasAnyAuthority(TipoUsuario.PROFESSOR.getNome())
                 .anyRequest().authenticated().and()
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
 //                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())

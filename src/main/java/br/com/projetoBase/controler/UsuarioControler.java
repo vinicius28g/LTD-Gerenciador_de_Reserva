@@ -1,5 +1,7 @@
 package br.com.projetoBase.controler;
 
+import br.com.projetoBase.Service.ClinicaService;
+import br.com.projetoBase.modelo.Clinica;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,15 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.projetoBase.Service.UsuarioService;
 import br.com.projetoBase.configuracoes.TokenService;
 import br.com.projetoBase.dto.Login;
-import br.com.projetoBase.dto.TipoUsuarioDto;
 import br.com.projetoBase.dto.UsuarioCadastro;
 import br.com.projetoBase.dto.UsuarioRetorno;
-import br.com.projetoBase.modelo.Endereco;
-import br.com.projetoBase.modelo.Pessoa;
 import br.com.projetoBase.modelo.TipoUsuario;
 import br.com.projetoBase.modelo.Usuario;
-import br.com.projetoBase.repositorio.EnderecoRepositorio;
-import br.com.projetoBase.repositorio.PessoaRepositorio;
 import br.com.projetoBase.repositorio.UsuarioRepositorio;
 
 @RestController
@@ -50,7 +47,8 @@ public class UsuarioControler {
     @Autowired
     private UsuarioService usuarioService;
     @Autowired
-    private PessoaRepositorio pessoaRepositorio;
+    private ClinicaService clinicaService;
+
     
 
     @GetMapping("/teste")
@@ -71,7 +69,7 @@ public class UsuarioControler {
             var usuario = (Usuario) authenticate.getPrincipal();
 
             UsuarioRetorno usuarioRetorno = new UsuarioRetorno(
-                    usuario.getPessoa().getNomeCompleto(),
+                    usuario.getNome(),
                     usuario.getTipoUsuario(),
                     tokenService.gerarToken(usuario)
             );
@@ -85,57 +83,25 @@ public class UsuarioControler {
     @Transactional
     @PostMapping("/usuario")
     public ResponseEntity<?> salvar(@RequestBody UsuarioCadastro usuarioCadastro){
-    	
-    	if(pegarUsuario()!= TipoUsuario.ADMIN) {
-    		return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-    	}
+
         Usuario usuario = new Usuario();
-       
-        Pessoa pessoa = new Pessoa();
+
+        Clinica clinica = clinicaService.buscarByName(usuarioCadastro.clinica());
+
         usuario.setTipoUsuario(TipoUsuario.ADMIN);
+        usuario.setNome(usuarioCadastro.nome());
         usuario.setUser(usuarioCadastro.user());
+        usuario.setClinica(clinica);
         usuario.setPass(new BCryptPasswordEncoder().encode(usuarioCadastro.pass()));
-        
-        pessoa.setNomeCompleto(usuarioCadastro.nome());
-               
-        usuario.setPessoa(pessoa);
-        pessoaRepositorio.save(pessoa);
+
         Usuario usuarioSalvo = usuarioService.salvar(usuario);
-        
+
         return new ResponseEntity<>(usuarioSalvo, HttpStatus.CREATED);
     }
     
-    @PostMapping("/alterarTipoUsuario")
-    public ResponseEntity<?> alterarTipoUser(@RequestBody TipoUsuarioDto tipoUsuarioDto){
-    	//obtem a autenticação do usuario logado
-    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    
-//        Pessoa pessoa = pessoaRepositorio.findByNomeCompleto(tipoUsuarioDto.nomePessoa());
-        TipoUsuario tipoUsuario = TipoUsuario.getTipo(tipoUsuarioDto.tipoUsuario()); 
-        
-        // verifica se o usuario estar realemnte autenticado
-    	if (authentication != null && authentication.isAuthenticated()) {
-             Usuario usuarioLogado = (Usuario) authentication.getPrincipal();
-             if(usuarioLogado.getTipoUsuario()== TipoUsuario.ADMIN){
-            	 Usuario novoUsuario = usuarioService.buscarPorId(tipoUsuarioDto.usuarioId());
-            	 novoUsuario.setTipoUsuario(tipoUsuario);
-            	 usuarioRepositorio.save(novoUsuario);
-            	 return new ResponseEntity<>(novoUsuario, HttpStatus.OK);
-             }
-        } 
-    	return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    	
-    }
 
-    @GetMapping("/carregarUser")
-    public ResponseEntity<?> carregarUser(@AuthenticationPrincipal Usuario usuario){
-        UsuarioRetorno usuarioRetorno = new UsuarioRetorno(
-                usuario.getPessoa().getNomeCompleto(),
-                usuario.getTipoUsuario(),
-                tokenService.gerarToken(usuario)
-        );
-        return new ResponseEntity<>(usuarioRetorno,HttpStatus.OK);
-    }
+
+
     @PostMapping("/teste2")
     public ResponseEntity<?>teste123(@RequestBody int numero){
     	System.out.println(numero);

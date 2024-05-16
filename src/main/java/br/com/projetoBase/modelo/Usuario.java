@@ -1,7 +1,7 @@
 package br.com.projetoBase.modelo;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,32 +17,44 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
     private String user;
 
     @NotNull
-    private String pass;
+    private String password;
+
+    private String nome;
 
     @NotNull
     private TipoUsuario tipoUsuario;
-    @OneToOne
-    @NotNull
-    private Pessoa pessoa;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-    	switch (tipoUsuario.getCodigo()) {
-		case 1: {
-			return List.of(new SimpleGrantedAuthority(TipoUsuario.ADMIN.getNome()), new SimpleGrantedAuthority(TipoUsuario.PACIENTE.getNome()));
-		}
-		case 2: {
-			return List.of(new SimpleGrantedAuthority(TipoUsuario.PACIENTE.name()));
-		}
-		default:
-			throw new IllegalArgumentException("Unexpected value: " + tipoUsuario.getCodigo());
-		}
-        
+    @ManyToOne
+    private Clinica clinica;
+
+
+    public Usuario() {}
+
+    public Usuario(String user, String password, String nome, TipoUsuario tipoUsuario, Clinica clinica) {
+        this.user = user;
+        this.password = password;
+        this.nome = nome;
+        this.tipoUsuario = tipoUsuario;
+        this.clinica = clinica;
     }
 
     @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+            switch (tipoUsuario.getCodigo()) {
+                case 1: {
+                    return List.of(new SimpleGrantedAuthority(TipoUsuario.ADMIN.getNome()), new SimpleGrantedAuthority(TipoUsuario.PACIENTE.getNome()));
+                }
+                case 2: {
+                    return List.of(new SimpleGrantedAuthority(TipoUsuario.PACIENTE.name()));
+                }
+                default:
+                    throw new IllegalArgumentException("Unexpected value: " + tipoUsuario.getCodigo());
+            }
+        }
+
+    @Override
     public String getPassword() {
-        return this.pass;
+        return this.password;
     }
 
     @Override
@@ -70,7 +82,6 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
         return true;
     }
 
-
     public String getUser() {
         return user;
     }
@@ -80,11 +91,11 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
     }
 
     public String getPass() {
-        return pass;
+        return password;
     }
 
-    public void setPass(String pass) {
-        this.pass = pass;
+    public void setPass(String password) {
+        this.password = password;
     }
 
     public TipoUsuario getTipoUsuario() {
@@ -95,14 +106,19 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
         this.tipoUsuario = tipoUsuario;
     }
 
-	public Pessoa getPessoa() {
-		return pessoa;
-	}
+    public Clinica getClinica() {
+        return clinica;
+    }
 
-	public void setPessoa(Pessoa pessoa) {
-		this.pessoa = pessoa;
-	}
-    
-    
-    
+    public void setClinica(Clinica clinica) {
+        this.clinica = clinica;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 }
