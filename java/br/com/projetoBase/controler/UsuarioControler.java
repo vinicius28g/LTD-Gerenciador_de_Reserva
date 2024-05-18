@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.projetoBase.Service.UsuarioService;
 import br.com.projetoBase.configuracoes.TokenService;
-import br.com.projetoBase.dto.FuncCordeCadastro;
 import br.com.projetoBase.dto.Login;
 import br.com.projetoBase.dto.UsuarioCadastro;
 import br.com.projetoBase.dto.RetornoLogin;
 import br.com.projetoBase.dto.RetornoUsuario;
 import br.com.projetoBase.modelo.TipoUsuario;
 import br.com.projetoBase.modelo.Usuario;
+import br.com.projetoBase.dto.FuncCordeCadastro;
 
 @RestController
 @RequestMapping("/home")
@@ -102,14 +102,16 @@ public class UsuarioControler {
     }
     
     @Transactional
-    @PutMapping("/editar/professor")
+    @PutMapping("/editar/coordenador")
     public ResponseEntity<?> editarPorfessor(@RequestBody UsuarioCadastro usuarioCadastro){
     	return usuarioService.editar(usuarioCadastro, TipoUsuario.COORDENADOR);
+
     }
     
     @Transactional
-    @PutMapping("/editar/estagiario")
+    @PutMapping("/editar/funcionario")
     public ResponseEntity<?> editarEstagiario(@RequestBody UsuarioCadastro usuarioCadastro){
+
     	return usuarioService.editar(usuarioCadastro, TipoUsuario.FUNCIONARIO);
     }
     
@@ -125,14 +127,15 @@ public class UsuarioControler {
     	return usuarioService.listAll(TipoUsuario.ADMIN);
     }
     
-    @GetMapping("/listAll/professor")
+    @GetMapping("/listAll/coordenador")
     public ResponseEntity<?> listAllProfessor(){
     	return usuarioService.listAll(TipoUsuario.COORDENADOR);
     }
     
-    @GetMapping("/listAll/estagiario")
+    @GetMapping("/listAll/funcionario")
     public ResponseEntity<?> listAllEstagiario(){
     	return usuarioService.listAll(TipoUsuario.FUNCIONARIO);
+
     }
     
     @GetMapping("/listAll/paciente")

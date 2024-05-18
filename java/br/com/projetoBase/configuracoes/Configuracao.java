@@ -1,5 +1,6 @@
 package br.com.projetoBase.configuracoes;
 
+import br.com.projetoBase.modelo.TipoUsuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +40,15 @@ public class Configuracao {
                 .requestMatchers(HttpMethod.PUT, "/home/editar/usuario").hasAnyAuthority(TipoUsuario.ADMIN.getNome())
                 .requestMatchers(HttpMethod.PUT, "/home/editar/coordenador").hasAnyAuthority(TipoUsuario.ADMIN.getNome())
                 .requestMatchers(HttpMethod.PUT, "/home/editar/funcionario").hasAnyAuthority(TipoUsuario.COORDENADOR.getNome())
+              //----------------------------------- consulta ------------------------------
+                .requestMatchers(HttpMethod.POST, "/home/consulta/salvar").permitAll()
+                .requestMatchers(HttpMethod.GET, "/home/consulta/listar").permitAll()
+                .requestMatchers(HttpMethod.GET, "/home/consulta/por-clinica").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/home/consulta/agendar").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/home/consulta/deletar").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/home/consulta/info").permitAll()
+                .requestMatchers(HttpMethod.GET, "/home/consulta/listarByDay").permitAll()
+                .requestMatchers(HttpMethod.GET, "/home/consulta/listarByPaciente").permitAll()
                 .anyRequest().authenticated().and()
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
 //                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())

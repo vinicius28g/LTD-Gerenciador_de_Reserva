@@ -1,5 +1,6 @@
 package br.com.projetoBase.repositorio;
 
+
 import br.com.projetoBase.modelo.TipoUsuario;
 import br.com.projetoBase.modelo.Usuario;
 
@@ -11,5 +12,6 @@ public interface UsuarioRepositorio extends JpaRepository<Usuario, Long>{
 
     Usuario findByUser(String nome);
     List<Usuario> findAllByTipoUsuario(TipoUsuario tipo);
+
 }
 
