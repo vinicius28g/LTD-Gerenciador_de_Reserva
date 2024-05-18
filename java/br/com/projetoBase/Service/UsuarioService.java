@@ -62,7 +62,7 @@ public class UsuarioService {
         usuario.setDataNascimento(usuarioCadastro.DataNascimento());
         usuario.setTipoUsuario(tipo);
         usuario.setUser(usuarioCadastro.user());
-        usuario.setPass(new BCryptPasswordEncoder().encode(usuarioCadastro.pass()));
+        usuario.setPassword(new BCryptPasswordEncoder().encode(usuarioCadastro.pass()));
         
         this.salvar(usuario);
         
@@ -84,7 +84,7 @@ public class UsuarioService {
 	        usuario.setDataNascimento(usuarioCadastro.DataNascimento());
 	        usuario.setTipoUsuario(tipo);
 	        usuario.setUser(usuarioCadastro.user());
-	        usuario.setPass(new BCryptPasswordEncoder().encode(usuarioCadastro.pass()));
+	        usuario.setPassword(new BCryptPasswordEncoder().encode(usuarioCadastro.pass()));
 	        
 	        this.salvar(usuario);
 	        
@@ -107,7 +107,7 @@ public class UsuarioService {
 	        usuario.setDataNascimento(usuarioCadastro.DataNascimento());
 	        usuario.setTipoUsuario(tipo);
 	        usuario.setUser(usuarioCadastro.user());
-	        usuario.setPass(new BCryptPasswordEncoder().encode(usuarioCadastro.pass()));
+	        usuario.setPassword(new BCryptPasswordEncoder().encode(usuarioCadastro.pass()));
 	        
 	        this.salvar(usuario);
 	
