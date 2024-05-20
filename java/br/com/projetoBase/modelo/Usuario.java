@@ -30,7 +30,6 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
     public Usuario(String user, String password, String nome, TipoUsuario tipoUsuario, Clinica clinica) {
         this.user = user;
         this.password = password;
-        this.nome = nome;
         this.tipoUsuario = tipoUsuario;
         this.clinica = clinica;
     }
@@ -41,8 +40,6 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
 
     @NotNull
     private String password;
-
-    private String nome;
 
     @NotNull
     private TipoUsuario tipoUsuario;
@@ -122,15 +119,7 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
 	public void setUser(String user) {
 		this.user = user;
 	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
+	
 	public TipoUsuario getTipoUsuario() {
 		return tipoUsuario;
 	}

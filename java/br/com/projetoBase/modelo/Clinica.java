@@ -20,7 +20,6 @@ public class Clinica extends EntidadeAbstrata{
     private String nome;
 
     private String descricao;
-    
 
     @NotNull
     private Long quantidadeMax;

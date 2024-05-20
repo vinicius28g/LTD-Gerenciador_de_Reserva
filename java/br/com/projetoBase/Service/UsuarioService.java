@@ -19,10 +19,7 @@ import br.com.projetoBase.modelo.TipoUsuario;
 import br.com.projetoBase.modelo.Usuario;
 import br.com.projetoBase.repositorio.ClinicaRepositorio;
 
-import br.com.projetoBase.dto.RetornoUsuario;
-import br.com.projetoBase.dto.UsuarioCadastro;
-import br.com.projetoBase.modelo.TipoUsuario;
-import br.com.projetoBase.modelo.Usuario;
+
 
 import br.com.projetoBase.repositorio.UsuarioRepositorio;
 
@@ -41,9 +38,11 @@ public class UsuarioService {
 	public Usuario salvar(Usuario usuario) {
 		return usuarioRepositorio.save(usuario);
 	}
-
 	
-
+	public Usuario buscarByUser(String user) {
+	    return usuarioRepositorio.findByUser(user);
+	}
+	
 	@Transactional
 	public Usuario buscarPorId(long id) {
 		Optional<Usuario> usuario =usuarioRepositorio.findById(id);
@@ -66,7 +65,13 @@ public class UsuarioService {
         
         this.salvar(usuario);
         
-        return new ResponseEntity<>(usuario, HttpStatus.CREATED);
+        return new ResponseEntity<>(new RetornoUsuario(
+				usuario.getId(),
+				usuario.getUser(),
+				usuario.getTipoUsuario().getNome(),
+				usuario.getNomeCompleto(),
+				usuario.getTelefone(),
+				usuario.getDataNascimento()), HttpStatus.CREATED);
 	    }
 	  
 
@@ -76,9 +81,12 @@ public class UsuarioService {
 			  return new ResponseEntity<>("Usuario já existente", HttpStatus.CONFLICT);
 		  }
 	        Usuario usuario = new Usuario();
-	        Clinica clinica = new Clinica();
-	        clinica = clinicaRepositorio.findById(usuarioCadastro.clinicaId()).get();
-	        usuario.setClinica(clinica);
+	        
+	        Optional<Clinica> opcionalClinica =  clinicaRepositorio.findById(usuarioCadastro.clinicaId());
+	        if(opcionalClinica.isEmpty()) {
+	        	return new ResponseEntity<>("clinica não encontrada", HttpStatus.CONFLICT); 
+	        }
+	        usuario.setClinica(opcionalClinica.get());
 	        usuario.setNomeCompleto(usuarioCadastro.nome());
 	        usuario.setTelefone(usuarioCadastro.telefone());
 	        usuario.setDataNascimento(usuarioCadastro.DataNascimento());
@@ -88,13 +96,22 @@ public class UsuarioService {
 	        
 	        this.salvar(usuario);
 	        
-	        return new ResponseEntity<>(usuario, HttpStatus.CREATED);
+	        return new ResponseEntity<>(new RetornoUsuario(
+					usuario.getId(),
+					usuario.getUser(),
+					usuario.getTipoUsuario().getNome(),
+					usuario.getNomeCompleto(),
+					usuario.getTelefone(),
+					usuario.getDataNascimento()), HttpStatus.CREATED);
 		    }
 	  
 
 	  public ResponseEntity<?> editar(UsuarioCadastro usuarioCadastro, TipoUsuario tipo){
 		  
 		  Optional<Usuario> usuarioOptional = usuarioRepositorio.findById(usuarioCadastro.id());
+		  if(usuarioOptional.isEmpty()) {
+			  return new ResponseEntity<>("usuario não encontrado", HttpStatus.NOT_FOUND);
+		  }
 			Usuario usuario = usuarioOptional.get();
 			Usuario usuCompare = (Usuario)usuarioRepositorio.findByUser(usuarioCadastro.user());
 	
@@ -111,7 +128,14 @@ public class UsuarioService {
 	        
 	        this.salvar(usuario);
 	
-			return new ResponseEntity<>(usuario, HttpStatus.CREATED);
+			return new ResponseEntity<>(
+					new RetornoUsuario(
+							usuario.getId(),
+							usuario.getUser(),
+							usuario.getTipoUsuario().getNome(),
+							usuario.getNomeCompleto(),
+							usuario.getTelefone(),
+							usuario.getDataNascimento()), HttpStatus.CREATED);
 		    }
 	  
 	  public ResponseEntity<?> listAll(TipoUsuario tipo){
