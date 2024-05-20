@@ -51,6 +51,8 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date dataNascimento;
+	
+	private String cpf;
 	@ManyToOne
 	private Clinica clinica;
     
@@ -164,5 +166,13 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
 		this.password = password;
 	}
 
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
+	
 
 }
