@@ -4,8 +4,10 @@
  */
 package br.com.projetoBase.controler;
 
+import br.com.projetoBase.dto.ClinicaDTO;
 import br.com.projetoBase.modelo.Clinica;
 import br.com.projetoBase.repositorio.ClinicaRepositorio;
+import jakarta.validation.Valid;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,15 +34,20 @@ public class ClinicaControler {
         this.clinicaRepositorio = clinicaRepositorio;
     }
     
-    @GetMapping()
+    @GetMapping("/listar")
     public ResponseEntity<?> listar(){
        return new ResponseEntity<>(clinicaRepositorio.findAll(),
                 HttpStatus.OK);
     }
-    @PostMapping()
-    public ResponseEntity<?> salvar(@RequestBody Clinica clinica){
+    @PostMapping("/salvar")
+    public ResponseEntity<?> salvar(@RequestBody @Valid ClinicaDTO clinicaDTO){
+        Clinica clinica = new Clinica();
+        clinica.setNome(clinicaDTO.nome());
+        clinica.setDescricao(clinicaDTO.descricao());
+        clinica.setQuantidadeMax(clinicaDTO.max());
+        clinica.setMaxPorHorario(clinicaDTO.maxHora());
        return new ResponseEntity<>(clinicaRepositorio.save(clinica),
-                HttpStatus.OK);
+                HttpStatus.CREATED);
     }
     @GetMapping("{id}")
     public ResponseEntity<?> buscar(@PathVariable Long id){
