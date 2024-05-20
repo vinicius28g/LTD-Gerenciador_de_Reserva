@@ -2,7 +2,7 @@ package br.com.projetoBase.dto;
 
 import java.util.Date;
 
-public record RetornoUsuario(long id,String user,String tipoUsuario, String nome, String telefone,  Date DataNascimento) {
+public record RetornoUsuario(long id,String user,String tipoUsuario, String nome, String telefone,  Date DataNascimento, String cpf) {
     
 	public long id() {
 		return id;

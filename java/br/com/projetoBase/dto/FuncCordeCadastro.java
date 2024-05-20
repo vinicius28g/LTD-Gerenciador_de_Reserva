@@ -4,7 +4,7 @@ import java.util.Date;
 
 import br.com.projetoBase.modelo.Clinica;
 
-public record FuncCordeCadastro(long id,String user, String pass, String nome, String telefone,  Date DataNascimento, long clinicaId) {
+public record FuncCordeCadastro(long id,String user, String pass, String nome, String telefone,  Date DataNascimento, long clinicaId, String cpf) {
     
 	public long id() {
 		return id;

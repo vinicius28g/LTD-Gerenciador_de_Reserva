@@ -61,6 +61,7 @@ public class UsuarioService {
         usuario.setDataNascimento(usuarioCadastro.DataNascimento());
         usuario.setTipoUsuario(tipo);
         usuario.setUser(usuarioCadastro.user());
+        usuario.setCpf(usuarioCadastro.cpf());
         usuario.setPassword(new BCryptPasswordEncoder().encode(usuarioCadastro.pass()));
         
         this.salvar(usuario);
@@ -71,7 +72,8 @@ public class UsuarioService {
 				usuario.getTipoUsuario().getNome(),
 				usuario.getNomeCompleto(),
 				usuario.getTelefone(),
-				usuario.getDataNascimento()), HttpStatus.CREATED);
+				usuario.getDataNascimento(),
+				usuario.getCpf()), HttpStatus.CREATED);
 	    }
 	  
 
@@ -92,6 +94,7 @@ public class UsuarioService {
 	        usuario.setDataNascimento(usuarioCadastro.DataNascimento());
 	        usuario.setTipoUsuario(tipo);
 	        usuario.setUser(usuarioCadastro.user());
+	        usuario.setCpf(usuarioCadastro.cpf());
 	        usuario.setPassword(new BCryptPasswordEncoder().encode(usuarioCadastro.pass()));
 	        
 	        this.salvar(usuario);
@@ -102,7 +105,8 @@ public class UsuarioService {
 					usuario.getTipoUsuario().getNome(),
 					usuario.getNomeCompleto(),
 					usuario.getTelefone(),
-					usuario.getDataNascimento()), HttpStatus.CREATED);
+					usuario.getDataNascimento(),
+					usuario.getCpf()), HttpStatus.CREATED);
 		    }
 	  
 
@@ -124,6 +128,7 @@ public class UsuarioService {
 	        usuario.setDataNascimento(usuarioCadastro.DataNascimento());
 	        usuario.setTipoUsuario(tipo);
 	        usuario.setUser(usuarioCadastro.user());
+	        usuario.setCpf(usuarioCadastro.cpf());
 	        usuario.setPassword(new BCryptPasswordEncoder().encode(usuarioCadastro.pass()));
 	        
 	        this.salvar(usuario);
@@ -135,7 +140,8 @@ public class UsuarioService {
 							usuario.getTipoUsuario().getNome(),
 							usuario.getNomeCompleto(),
 							usuario.getTelefone(),
-							usuario.getDataNascimento()), HttpStatus.CREATED);
+							usuario.getDataNascimento(),
+							usuario.getCpf()), HttpStatus.CREATED);
 		    }
 	  
 	  public ResponseEntity<?> listAll(TipoUsuario tipo){
@@ -150,7 +156,8 @@ public class UsuarioService {
 					  usuario.getTipoUsuario().getNome(),
 					  usuario.getNomeCompleto(),
 					  usuario.getTelefone(),
-					  usuario.getDataNascimento());
+					  usuario.getDataNascimento(),
+					  usuario.getCpf());
 			  usarioRetornos.add(retorno);
 		  }
 	
