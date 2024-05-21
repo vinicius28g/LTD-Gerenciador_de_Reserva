@@ -4,11 +4,10 @@
  */
 package br.com.projetoBase.controler;
 
-import br.com.projetoBase.dto.ClinicaDTO;
+import br.com.projetoBase.dto.clinica.ClinicaDTO;
 import br.com.projetoBase.modelo.Clinica;
 import br.com.projetoBase.repositorio.ClinicaRepositorio;
 import jakarta.validation.Valid;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -46,6 +45,8 @@ public class ClinicaControler {
         clinica.setDescricao(clinicaDTO.descricao());
         clinica.setQuantidadeMax(clinicaDTO.max());
         clinica.setMaxPorHorario(clinicaDTO.maxHora());
+        clinica.setInicio(clinicaDTO.inicio());
+        clinica.setFim(clinicaDTO.fim());
        return new ResponseEntity<>(clinicaRepositorio.save(clinica),
                 HttpStatus.CREATED);
     }

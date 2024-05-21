@@ -16,9 +16,9 @@ public class ClinicaService {
 
     public Clinica buscarByUser(Usuario usuario) {
 
-        Clinica clinicaID = usuario.getClinica();
+        Clinica clinica = usuario.getClinica();
 
-        return clinicaRepositorio.findById(clinicaID);
+        return clinicaRepositorio.findById(clinica.getId()).get();
     }
 
     public  Clinica buscarByName (String clinica) {

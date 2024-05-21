@@ -1,7 +1,5 @@
 package br.com.projetoBase.controler;
 
-import br.com.projetoBase.Service.ClinicaService;
-import br.com.projetoBase.modelo.Clinica;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,11 +8,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,21 +22,16 @@ import br.com.projetoBase.Service.UsuarioService;
 import br.com.projetoBase.configuracoes.TokenService;
 import br.com.projetoBase.dto.Login;
 import br.com.projetoBase.dto.UsuarioCadastro;
-import br.com.projetoBase.dto.UsuarioRetorno;
+import br.com.projetoBase.dto.RetornoLogin;
+import br.com.projetoBase.dto.RetornoUsuario;
 import br.com.projetoBase.modelo.TipoUsuario;
 import br.com.projetoBase.modelo.Usuario;
-import br.com.projetoBase.repositorio.UsuarioRepositorio;
+import br.com.projetoBase.dto.FuncCordeCadastro;
 
 @RestController
 @RequestMapping("/home")
 @CrossOrigin(origins = "*")
 public class UsuarioControler {
-
-    private final UsuarioRepositorio usuarioRepositorio;
-
-    public UsuarioControler(UsuarioRepositorio usuarioRepositorio) {
-        this.usuarioRepositorio = usuarioRepositorio;
-    }
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -46,10 +40,6 @@ public class UsuarioControler {
     private TokenService tokenService;
     @Autowired
     private UsuarioService usuarioService;
-    @Autowired
-    private ClinicaService clinicaService;
-
-    
 
     @GetMapping("/teste")
     public ResponseEntity<?> testar(@AuthenticationPrincipal Usuario usuario){
@@ -68,45 +58,109 @@ public class UsuarioControler {
 
             var usuario = (Usuario) authenticate.getPrincipal();
 
-            UsuarioRetorno usuarioRetorno = new UsuarioRetorno(
-                    usuario.getNome(),
+            RetornoLogin RetornoLogin = new RetornoLogin(
+                    usuario.getNomeCompleto(),
                     usuario.getTipoUsuario(),
                     tokenService.gerarToken(usuario)
             );
 
-            return new ResponseEntity<>(usuarioRetorno,HttpStatus.OK);
+            return new ResponseEntity<>(RetornoLogin,HttpStatus.OK);
         }catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("usuario ou senha invalido",HttpStatus.NOT_FOUND);
         }
     }
 
     @Transactional
-    @PostMapping("/usuario")
-    public ResponseEntity<?> salvar(@RequestBody UsuarioCadastro usuarioCadastro){
-
-        Usuario usuario = new Usuario();
-
-        Clinica clinica = clinicaService.buscarByName(usuarioCadastro.clinica());
-
-        usuario.setTipoUsuario(TipoUsuario.ADMIN);
-        usuario.setNome(usuarioCadastro.nome());
-        usuario.setUser(usuarioCadastro.user());
-        usuario.setClinica(clinica);
-        usuario.setPass(new BCryptPasswordEncoder().encode(usuarioCadastro.pass()));
-
-        Usuario usuarioSalvo = usuarioService.salvar(usuario);
-
-        return new ResponseEntity<>(usuarioSalvo, HttpStatus.CREATED);
+    @PostMapping("/salvar/usuario")
+    public ResponseEntity<?> salvarAdm(@RequestBody UsuarioCadastro usuarioCadastro){
+    	return usuarioService.salvar(usuarioCadastro, TipoUsuario.ADMIN);
     }
     
-
-
-
-    @PostMapping("/teste2")
-    public ResponseEntity<?>teste123(@RequestBody int numero){
-    	System.out.println(numero);
-    	return new ResponseEntity<>(HttpStatus.OK);
+    @Transactional
+    @PostMapping("/salvar/coordenador")
+    public ResponseEntity<?> salvarCoordenador(@RequestBody FuncCordeCadastro usuarioCadastro){
+    	return usuarioService.salvarFuncCord(usuarioCadastro, TipoUsuario.COORDENADOR);
     }
+    
+    @Transactional
+    @PostMapping("/salvar/funcionario")
+    public ResponseEntity<?> salvarFuncionario(@RequestBody FuncCordeCadastro usuarioCadastro){
+    	return usuarioService.salvarFuncCord(usuarioCadastro, TipoUsuario.FUNCIONARIO);
+    }
+    
+    @Transactional
+    @PostMapping("/salvar/paciente")
+    public ResponseEntity<?> salvarPaciente(@RequestBody UsuarioCadastro usuarioCadastro){
+    	return usuarioService.salvar(usuarioCadastro, TipoUsuario.PACIENTE);
+    }
+    
+    // --------------------------- editar ------------------------------
+    @Transactional
+    @PutMapping("/editar/usuario")
+    public ResponseEntity<?> editarAdm(@RequestBody UsuarioCadastro usuarioCadastro){
+    	return usuarioService.editar(usuarioCadastro, TipoUsuario.ADMIN);
+    }
+    
+    @Transactional
+    @PutMapping("/editar/coordenador")
+    public ResponseEntity<?> editarPorfessor(@RequestBody UsuarioCadastro usuarioCadastro){
+    	return usuarioService.editar(usuarioCadastro, TipoUsuario.COORDENADOR);
+
+    }
+    
+    @Transactional
+    @PutMapping("/editar/funcionario")
+    public ResponseEntity<?> editarEstagiario(@RequestBody UsuarioCadastro usuarioCadastro){
+
+    	return usuarioService.editar(usuarioCadastro, TipoUsuario.FUNCIONARIO);
+    }
+    
+    @Transactional
+    @PutMapping("/editar/paciente")
+    public ResponseEntity<?> editarPaciente(@RequestBody UsuarioCadastro usuarioCadastro){
+    	return usuarioService.editar(usuarioCadastro, TipoUsuario.PACIENTE);
+    }
+    //---------------- listAll ------------------------------------
+    
+    @GetMapping("/listAll/usuario")
+    public ResponseEntity<?> listAllUsuario(){
+    	return usuarioService.listAll(TipoUsuario.ADMIN);
+    }
+    
+    @GetMapping("/listAll/coordenador")
+    public ResponseEntity<?> listAllProfessor(){
+    	return usuarioService.listAll(TipoUsuario.COORDENADOR);
+    }
+    
+    @GetMapping("/listAll/funcionario")
+    public ResponseEntity<?> listAllEstagiario(){
+    	return usuarioService.listAll(TipoUsuario.FUNCIONARIO);
+
+    }
+    
+    @GetMapping("/listAll/paciente")
+    public ResponseEntity<?> listAllPaciente(){
+    	return usuarioService.listAll(TipoUsuario.PACIENTE);
+    }
+    
+    /*
+     * get generico pos qualquer pessoa pode ver os usuario já que não vao modificar nada
+     * apenas ver as informações basicas. 
+     */
+    @GetMapping("/getUsuario{id}")
+    public ResponseEntity<?> getUsuario(@PathVariable Long id){
+    	Usuario usuario = new Usuario();
+    	usuario = usuarioService.buscarPorId(id);
+    	RetornoUsuario retorno = new RetornoUsuario(
+    			usuario.getId(), 
+    			usuario.getUser(), 
+    			usuario.getTipoUsuario().getNome(),
+    			usuario.getNomeCompleto(), 
+    			usuario.getTelefone(), 
+    			usuario.getDataNascimento());
+    	return new ResponseEntity<>(retorno, HttpStatus.OK);
+    }
+    
     
     public TipoUsuario pegarUsuario() {
     	//obtem a autenticação do usuario logado

@@ -1,4 +1,4 @@
-package br.com.projetoBase.dto;
+package br.com.projetoBase.dto.consulta;
 
 import br.com.projetoBase.modelo.Clinica;
 

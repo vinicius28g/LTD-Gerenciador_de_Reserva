@@ -49,6 +49,7 @@ public class Configuracao {
                 .requestMatchers(HttpMethod.PUT, "/home/consulta/info").permitAll()
                 .requestMatchers(HttpMethod.GET, "/home/consulta/listarByDay").permitAll()
                 .requestMatchers(HttpMethod.GET, "/home/consulta/listarByPaciente").permitAll()
+                .requestMatchers(HttpMethod.GET, "/home/consulta/horario-disponiveis").permitAll()
 //                .requestMatchers(HttpMethod.POST, "/home/clinica/salvar").permitAll()
                 .anyRequest().authenticated().and()
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)

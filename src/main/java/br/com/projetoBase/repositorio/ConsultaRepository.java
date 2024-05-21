@@ -1,7 +1,6 @@
 package br.com.projetoBase.repositorio;
 
-import br.com.projetoBase.dto.ConsultasDTO;
-import br.com.projetoBase.dto.ListByConsultasDTO;
+import br.com.projetoBase.dto.consulta.ListByConsultasDTO;
 import br.com.projetoBase.modelo.Clinica;
 import br.com.projetoBase.modelo.Consulta;
 import br.com.projetoBase.modelo.Usuario;
@@ -10,7 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 
 public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
     List<Consulta> findByClinica(Clinica clinica);
@@ -19,7 +17,7 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 
     long countByClinicaAndDiaSemana(Clinica clinica, LocalDate data);
 
-    long countByClinicaAndDiaSemanaAndHorarioInicioAndHorarioFim(Clinica clinica, LocalDate data, LocalTime inicio, LocalTime fim);
+    int countByClinicaAndDiaSemanaAndHorarioInicioAndHorarioFim(Clinica clinica, LocalDate data, LocalTime inicio, LocalTime fim);
 
     List<Consulta> findByClinicaAndDiaSemana(Clinica clinica, LocalDate date);
 

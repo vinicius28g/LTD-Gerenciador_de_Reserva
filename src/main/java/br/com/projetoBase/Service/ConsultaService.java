@@ -1,7 +1,8 @@
 package br.com.projetoBase.Service;
 
-import br.com.projetoBase.dto.ConsultasDTO;
-import br.com.projetoBase.dto.ListByConsultasDTO;
+import br.com.projetoBase.dto.clinica.ConsultasDisponiveisResponseDTO;
+import br.com.projetoBase.dto.clinica.IntervaloHorarioDTO;
+import br.com.projetoBase.dto.consulta.ConsultasDTO;
 import br.com.projetoBase.modelo.Clinica;
 import br.com.projetoBase.modelo.Consulta;
 import br.com.projetoBase.modelo.Usuario;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,9 +33,35 @@ public class ConsultaService {
                 .collect(Collectors.toList());
     }
 
-    public boolean isHorarioOcupado (Clinica clinica, LocalDate data, LocalTime inicio, LocalTime fim) {
-        long quantidadeConsultas = consultaRepository.countByClinicaAndDiaSemanaAndHorarioInicioAndHorarioFim(clinica, data, inicio, fim);
-        return quantidadeConsultas >= clinica.getMaxPorHorario();
+    public ConsultasDisponiveisResponseDTO isHorarioOcupado (Clinica clinica, LocalDate data, LocalTime inicio, LocalTime fim) {
+       int limiteConsultasHora = clinica.getMaxPorHorario();
+
+       List<IntervaloHorarioDTO> intervaloHorarioDTOS = new ArrayList<>();
+       LocalTime intervaloAtual = inicio;
+
+       while (intervaloAtual.isBefore(fim)) {
+           LocalTime proxIntervalo = intervaloAtual.plusHours(1);
+           if (proxIntervalo == fim) {
+               proxIntervalo = fim;
+           }
+
+           int consultasAgendadas = consultaRepository.countByClinicaAndDiaSemanaAndHorarioInicioAndHorarioFim(clinica, data, intervaloAtual, proxIntervalo);
+           int consultasDisponiveis = limiteConsultasHora - consultasAgendadas;
+
+           if (consultasDisponiveis < 0) {
+               consultasDisponiveis = 0;
+           }
+
+           if (consultasDisponiveis > 0) {
+               IntervaloHorarioDTO intervaloHorarioDTO = new IntervaloHorarioDTO(intervaloAtual, proxIntervalo, consultasDisponiveis);
+               intervaloHorarioDTOS.add(intervaloHorarioDTO);
+           }
+
+           intervaloAtual = proxIntervalo;
+       }
+
+        return new ConsultasDisponiveisResponseDTO(limiteConsultasHora, intervaloHorarioDTOS);
+
     }
 
     public long contarPorData (Clinica clinica, LocalDate data){
@@ -54,9 +82,9 @@ public class ConsultaService {
                 .collect(Collectors.toList());
     }
 
-    private ConsultasDTO mapToConsultaDTO (Consulta consulta) {
-        Usuario nomePaciente = consulta.getPaciente();
-        Usuario nomeFuncionario = consulta.getFuncionario();
+    public ConsultasDTO mapToConsultaDTO (Consulta consulta) {
+        String nomePaciente = consulta.getPaciente().getNomeCompleto();
+        String nomeFuncionario = consulta.getFuncionario() != null ? consulta.getFuncionario().getNomeCompleto() : "Aguardando atualizações...";
 
         return new ConsultasDTO(
                 consulta.getId(),
