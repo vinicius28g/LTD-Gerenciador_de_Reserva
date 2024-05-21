@@ -41,7 +41,7 @@ BODY da requisição em JSON
 
 ```bash
    GET  /home/consulta/horarios-disponiveis: End point para listar todas as consultas agendadas disponiveis por horário.
-    
+   ROLES: TODOS 
     {
 	"clinica": {
 	"id": 3,
@@ -58,7 +58,7 @@ BODY da requisição em JSON
 
 ```bash
     POST  /home/consulta/salvar: End point para salvar a consulta referente ao usuário e clínica.
-    
+    ROLES: TODOS
     {
   "dia": "2024-05-27",
   "clinica": {
@@ -78,12 +78,12 @@ BODY da requisição em JSON
 
 ```bash
   GET  /home/consulta/listar: End point para listar todas as consultas agendadas.
-    
+    ROLES: COORDENADOR
 ```
 --
 ```bash
    GET  /home/consulta/por-clinica: End point para listar todas as consultas agendadas pelo o paciente mas filtrando por clínica.
-   
+   ROLES: COORDENADOR
    {
 	"clinica": "Direito"
 }
@@ -93,7 +93,7 @@ BODY da requisição em JSON
 
 ```bash
   DELETE  /home/consulta/deletar: End point para excluir alguma consulta agendada(apenas certos usuario tem acesso a esse end-point).
-  
+  ROLES: COORDENADOR
   {
 	"id": 1
 }
@@ -101,7 +101,7 @@ BODY da requisição em JSON
 --
 ```bash
    PUT  /home/consulta/info: End point para "setar" as informações de funcionário que irá atender o paciente com alguma informação adicional.
-   
+   ROLES: FUNCIONÁRIO
    {
 	"consulta": 1,
 	"info": "VC é neuro-divergente, mas é legal",
@@ -111,7 +111,7 @@ BODY da requisição em JSON
 --
 ```bash
    GET  /home/consulta/listarByDay: End point para listar todas as consultas agendadas por data e clínica.
-   
+   ROLES: FUNCIONÁRIO
    {
 	"clinica": {
 		"id": 1,
@@ -127,7 +127,7 @@ BODY da requisição em JSON
 --
 ```bash
   GET  /home/consulta/listarByPaciente: End point para listar todas as consultas agendadas pelo o paciente mas filtrando por usuário do paciente.
-  
+  ROLES: FUNCIONÁRIO
   {
 	"paciente": "diego"
 }
@@ -138,3 +138,4 @@ BODY da requisição em JSON
 Vale a pena dizer que, temos algumas restrições de agendamento de consulta para cada clínica como:
 1. Quantidade Máxima por Dia.
 2. Quantidade Máxima por Intervalo De Horário.
+3.  LEMBRAR SEMPRE DE CONFIGURAR O "application.properties" DE ACORDO COM SUAS CREDENCIAIS LOCAIS.

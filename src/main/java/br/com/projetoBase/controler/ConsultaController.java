@@ -110,15 +110,14 @@ public class ConsultaController {
     }
 
     @PutMapping("/info")
-    public ResponseEntity infoConsulta (@RequestBody @Valid InfoDTO infoDTO) {
+    public ResponseEntity infoConsulta (@RequestBody @Valid InfoDTO infoDTO, @AuthenticationPrincipal Usuario usuario) {
         Optional<Consulta> consultaOptional = consultaRepository.findById(infoDTO.consulta());
-        Usuario usuarioFuncionario = usuarioService.buscarByUser(infoDTO.user());
         Consulta consulta = new Consulta();
 
         if (consultaOptional.isPresent()) {
             consulta = consultaOptional.get();
             consulta.setInformacoesGerais(infoDTO.info());
-            consulta.setFuncionario(usuarioFuncionario);
+            consulta.setFuncionario(usuario);
             consultaRepository.save(consulta);
         }
 
