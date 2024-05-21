@@ -23,6 +23,8 @@ A continuação da aplicação Back-End do LTD Estácio onde é incluso os micro
     
     GET  /home/consulta/listar: End point para listar todas as consultas agendadas pelo o paciente.
     
+    GET  /home/consulta/horarios-disponiveis: End point para listar todas as consultas agendadas disponiveis por horário.
+    
     GET  /home/consulta/por-clinica: End point para listar todas as consultas agendadas pelo o paciente mas filtrando por clínica.
     
     DELETE  /home/consulta/deletar: End point para excluir alguma consulta agendada(apenas certos usuario tem acesso a esse end-point).
@@ -36,6 +38,23 @@ A continuação da aplicação Back-End do LTD Estácio onde é incluso os micro
 ```
 
 BODY da requisição em JSON 
+
+```bash
+   GET  /home/consulta/horarios-disponiveis: End point para listar todas as consultas agendadas disponiveis por horário.
+    
+    {
+	"clinica": {
+	"id": 3,
+	"nome": "Radiologia",
+	"descricao": "TE ACALMA",
+	"quantidadeMax": 7,
+	"inicio": "08:00:00",
+	"fim": "13:00:00",
+	"maxPorHorario": 3
+},
+	"data": "2024-05-30"
+}
+```
 
 ```bash
     POST  /home/consulta/salvar: End point para salvar a consulta referente ao usuário e clínica.
