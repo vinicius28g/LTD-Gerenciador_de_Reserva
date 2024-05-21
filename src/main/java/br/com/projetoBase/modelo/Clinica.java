@@ -8,6 +8,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.cglib.core.Local;
+
+import java.time.LocalTime;
 
 /**
  *
@@ -25,13 +28,19 @@ public class Clinica extends EntidadeAbstrata{
     private Long quantidadeMax;
 
     @NotNull
-    private long MaxPorHorario;
+    private int MaxPorHorario;
+
+    @NotNull
+    private LocalTime inicio;
+
+    @NotNull
+    private LocalTime fim;
 
     public Clinica() {
 
     }
 
-    public Clinica(String nome, String descricao, Long quantidadeMax, long maxPorHorario) {
+    public Clinica(String nome, String descricao, Long quantidadeMax, int maxPorHorario) {
         this.nome = nome;
         this.descricao = descricao;
         this.quantidadeMax = quantidadeMax;
@@ -65,12 +74,28 @@ public class Clinica extends EntidadeAbstrata{
         this.quantidadeMax = quantidadeMax;
     }
 
-    public long getMaxPorHorario() {
+    public int getMaxPorHorario() {
         return MaxPorHorario;
     }
 
-    public void setMaxPorHorario(long maxPorHorario) {
+    public void setMaxPorHorario(int maxPorHorario) {
         MaxPorHorario = maxPorHorario;
+    }
+
+    public LocalTime getInicio() {
+        return inicio;
+    }
+
+    public void setInicio(LocalTime inicio) {
+        this.inicio = inicio;
+    }
+
+    public LocalTime getFim() {
+        return fim;
+    }
+
+    public void setFim(LocalTime fim) {
+        this.fim = fim;
     }
 }
 

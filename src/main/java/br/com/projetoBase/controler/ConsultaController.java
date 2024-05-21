@@ -4,6 +4,9 @@ import br.com.projetoBase.Service.ClinicaService;
 import br.com.projetoBase.Service.ConsultaService;
 import br.com.projetoBase.Service.UsuarioService;
 import br.com.projetoBase.dto.*;
+import br.com.projetoBase.dto.clinica.ConsultasDisponiveisResponseDTO;
+import br.com.projetoBase.dto.clinica.VerificarHorariosRequestDTO;
+import br.com.projetoBase.dto.consulta.*;
 import br.com.projetoBase.modelo.Clinica;
 import br.com.projetoBase.modelo.Consulta;
 import br.com.projetoBase.modelo.Usuario;
@@ -12,12 +15,12 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 @RestController
@@ -37,10 +40,10 @@ public class ConsultaController {
     private ConsultaService consultaService;
 
     @PostMapping("/salvar")
-    public ResponseEntity agendar (@RequestBody AgendarConsultaDTO agendarConsultaDTO) {
+    public ResponseEntity agendar (@RequestBody AgendarConsultaDTO agendarConsultaDTO, @AuthenticationPrincipal Usuario usuarioPaciente) {
         Consulta consulta = new Consulta();
 
-        consulta.setPaciente(usuarioService.buscarByUser(agendarConsultaDTO.paciente()));
+        consulta.setPaciente(usuarioPaciente);
 
         Clinica clinica = agendarConsultaDTO.clinica();
         consulta.setClinica(clinica);
@@ -48,9 +51,6 @@ public class ConsultaController {
         LocalDate diaConsulta = agendarConsultaDTO.dia();
         LocalTime inicio = agendarConsultaDTO.horaInicio();
         LocalTime fim = agendarConsultaDTO.horaFim();
-        if (consultaService.isHorarioOcupado(clinica, diaConsulta, inicio, fim)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Horário de consulta indisponível para o horário " +inicio+ " até " +fim+ " no data " +diaConsulta+ ".");
-        }
 
         if (consultaService.contarPorData(clinica, diaConsulta) >= clinica.getQuantidadeMax()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Quantidade máxima de consultas atingidas para o dia " +diaConsulta+".");
@@ -62,8 +62,14 @@ public class ConsultaController {
         consulta.setInformacoesGerais(agendarConsultaDTO.info());
         consultaRepository.save(consulta);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(consulta);
+        return ResponseEntity.status(HttpStatus.CREATED).body(consultaService.mapToConsultaDTO(consulta));
 
+    }
+
+    @GetMapping("/horario-disponiveis")
+    public ResponseEntity<ConsultasDisponiveisResponseDTO> verificarHorariosDisponiveis (@RequestBody VerificarHorariosRequestDTO dto) {
+        ConsultasDisponiveisResponseDTO responseDTO = consultaService.isHorarioOcupado(dto.clinica(), dto.data(), dto.clinica().getInicio(), dto.clinica().getFim());
+        return ResponseEntity.ok(responseDTO);
     }
 
     @GetMapping("/listarByDay")
