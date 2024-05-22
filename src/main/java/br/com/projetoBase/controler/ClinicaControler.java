@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,18 +56,39 @@ public class ClinicaControler {
                               @RequestParam("file") MultipartFile file,
                               @RequestParam("diasAtendimento") String diasAtendimento) throws IOException {
 
-                ClinicaDTO clinicaDTO = new ClinicaDTO(
-                        nome,
-                        descricao,
-                        max,
-                        maxHora,
-                        LocalTime.parse(inicio),
-                        LocalTime.parse(fim),
-                        LocalTime.parse(inicio2),
-                        LocalTime.parse(fim2),
-                        file.getBytes(),
-                        diasAtendimento
-                );
+        if (StringUtils.isEmpty(inicio)) {
+            inicio = null;
+        }
+
+        if (StringUtils.isEmpty(fim)) {
+            fim = null;
+        }
+
+        if (StringUtils.isEmpty(inicio2)) {
+            inicio2 = null;
+        }
+
+        if (StringUtils.isEmpty(fim2)) {
+            fim2 = null;
+        }
+
+        LocalTime inicioTime = StringUtils.hasText(inicio) ? LocalTime.parse(inicio) : null;
+        LocalTime fimTime = StringUtils.hasText(fim) ? LocalTime.parse(fim) : null;
+        LocalTime inicio2Time = StringUtils.hasText(inicio2) ? LocalTime.parse(inicio2) : null;
+        LocalTime fim2Time = StringUtils.hasText(fim2) ? LocalTime.parse(fim2) : null;
+
+        ClinicaDTO clinicaDTO = new ClinicaDTO(
+                nome,
+                descricao,
+                max,
+                maxHora,
+                inicioTime,
+                fimTime,
+                inicio2Time,
+                fim2Time,
+                file.getBytes(),
+                diasAtendimento
+        );
 
                 return clinicaService.saveClinica(clinicaDTO);
     }
