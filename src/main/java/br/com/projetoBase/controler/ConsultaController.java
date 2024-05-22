@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -83,14 +84,30 @@ public class ConsultaController {
         Optional<Clinica> clinicaOptional = clinicaRepositorio.findById(dto.clinica());
         if (clinicaOptional.isPresent()){
             Clinica clinica = clinicaOptional.get();
-            ConsultasDisponiveisResponseDTO responseDTO = consultaService.isHorarioOcupado(clinica, dto.data(), clinica.getInicio(), clinica.getFim());
-            ConsultasDisponiveisResponseDTO responseDTO1 = consultaService.isHorarioOcupado(clinica, dto.data(), clinica.getInicio2(), clinica.getFim2());
 
-            List<IntervaloHorarioDTO> horariosDisponiveis = new ArrayList<>(responseDTO.intervaloHorarioDTOS());
-            horariosDisponiveis.addAll(responseDTO1.intervaloHorarioDTOS());
+            List<IntervaloHorarioDTO> HorarioManha = null;
+            if (clinica.getInicio() != null && clinica.getFim() != null) {
+                ConsultasDisponiveisResponseDTO responseDTO = consultaService.isHorarioOcupado(clinica, dto.data(), clinica.getInicio(), clinica.getFim());
+                HorarioManha = responseDTO.intervaloHorarioDTOS();
+            }
 
-            ConsultasDisponiveisResponseDTO combinedResponseDTO = new ConsultasDisponiveisResponseDTO(responseDTO.limite(), horariosDisponiveis);
 
+            List<IntervaloHorarioDTO> HorarioTarde = null;
+            if (clinica.getInicio2() != null && clinica.getFim2() != null) {
+                ConsultasDisponiveisResponseDTO responseDTO = consultaService.isHorarioOcupado(clinica, dto.data(), clinica.getInicio2(), clinica.getFim2());
+                HorarioTarde = responseDTO.intervaloHorarioDTOS();
+            }
+
+
+            List<IntervaloHorarioDTO> horariosDisponiveisCombinados = new ArrayList<>();
+            if (HorarioManha != null) {
+                horariosDisponiveisCombinados.addAll(HorarioManha);
+            }
+            if (HorarioTarde != null) {
+                horariosDisponiveisCombinados.addAll(HorarioTarde);
+            }
+            
+            ConsultasDisponiveisResponseDTO combinedResponseDTO = new ConsultasDisponiveisResponseDTO(clinica.getMaxPorHorario(), horariosDisponiveisCombinados);
             return ResponseEntity.ok(combinedResponseDTO);
         }
         return ResponseEntity.notFound().build();
