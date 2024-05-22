@@ -5,5 +5,5 @@ import br.com.projetoBase.modelo.Clinica;
 import java.time.LocalDate;
 
 
-public record VerificarHorariosRequestDTO(Clinica clinica, LocalDate data) {
+public record VerificarHorariosRequestDTO(Long clinica, LocalDate data) {
 }

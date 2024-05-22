@@ -4,13 +4,12 @@
  */
 package br.com.projetoBase.modelo;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalTime;
+import java.util.Set;
 
 /**
  *
@@ -30,11 +29,20 @@ public class Clinica extends EntidadeAbstrata{
     @NotNull
     private int MaxPorHorario;
 
-    @NotNull
-    private LocalTime inicio;
 
-    @NotNull
+    private LocalTime inicio;
     private LocalTime fim;
+    private LocalTime inicio2;
+    private LocalTime fim2;
+
+    @Lob
+    @Column(name = "image", columnDefinition = "LONGBLOB")
+    private byte[] image;
+
+
+    @Column(name = "dias_atendimento")
+    private String diasAtendimento;
+
 
     public Clinica() {
 
@@ -96,6 +104,38 @@ public class Clinica extends EntidadeAbstrata{
 
     public void setFim(LocalTime fim) {
         this.fim = fim;
+    }
+
+    public LocalTime getInicio2() {
+        return inicio2;
+    }
+
+    public void setInicio2(LocalTime inicio2) {
+        this.inicio2 = inicio2;
+    }
+
+    public LocalTime getFim2() {
+        return fim2;
+    }
+
+    public void setFim2(LocalTime fim2) {
+        this.fim2 = fim2;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
+    public String getDiasAtendimento() {
+        return diasAtendimento;
+    }
+
+    public void setDiasAtendimento(String diasAtendimento) {
+        this.diasAtendimento = diasAtendimento;
     }
 }
 
