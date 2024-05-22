@@ -137,5 +137,14 @@ BODY da requisição em JSON
 
 Vale a pena dizer que, temos algumas restrições de agendamento de consulta para cada clínica como:
 1. Quantidade Máxima por Dia.
+
+
 2. Quantidade Máxima por Intervalo De Horário.
+
+
 3.  LEMBRAR SEMPRE DE CONFIGURAR O "application.properties" DE ACORDO COM SUAS CREDENCIAIS LOCAIS.
+
+
+4. Agora o End-Point para salvar clinica mudou o formato para MultiPart-Form
+
+![PrintDOC](/github/printDOC.jpeg)

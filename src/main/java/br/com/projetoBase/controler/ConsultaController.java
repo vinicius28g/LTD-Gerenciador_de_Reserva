@@ -5,12 +5,15 @@ import br.com.projetoBase.Service.ConsultaService;
 import br.com.projetoBase.Service.UsuarioService;
 import br.com.projetoBase.dto.*;
 import br.com.projetoBase.dto.clinica.ConsultasDisponiveisResponseDTO;
+import br.com.projetoBase.dto.clinica.IntervaloHorarioDTO;
 import br.com.projetoBase.dto.clinica.VerificarHorariosRequestDTO;
 import br.com.projetoBase.dto.consulta.*;
 import br.com.projetoBase.modelo.Clinica;
 import br.com.projetoBase.modelo.Consulta;
 import br.com.projetoBase.modelo.Usuario;
+import br.com.projetoBase.repositorio.ClinicaRepositorio;
 import br.com.projetoBase.repositorio.ConsultaRepository;
+import com.sun.jdi.PrimitiveValue;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,37 +43,57 @@ public class ConsultaController {
     @Autowired
     private ConsultaService consultaService;
 
+    @Autowired
+    private ClinicaRepositorio clinicaRepositorio;
+
     @PostMapping("/salvar")
     public ResponseEntity agendar (@RequestBody AgendarConsultaDTO agendarConsultaDTO, @AuthenticationPrincipal Usuario usuarioPaciente) {
         Consulta consulta = new Consulta();
 
         consulta.setPaciente(usuarioPaciente);
 
-        Clinica clinica = agendarConsultaDTO.clinica();
-        consulta.setClinica(clinica);
+        Optional<Clinica> clinicaOptional = clinicaRepositorio.findById(agendarConsultaDTO.clinica());
+        if (clinicaOptional.isPresent()) {
+            Clinica clinica = clinicaOptional.get();
 
-        LocalDate diaConsulta = agendarConsultaDTO.dia();
-        LocalTime inicio = agendarConsultaDTO.horaInicio();
-        LocalTime fim = agendarConsultaDTO.horaFim();
+            consulta.setClinica(clinica);
 
-        if (consultaService.contarPorData(clinica, diaConsulta) >= clinica.getQuantidadeMax()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Quantidade máxima de consultas atingidas para o dia " +diaConsulta+".");
+            LocalDate diaConsulta = agendarConsultaDTO.dia();
+            LocalTime inicio = agendarConsultaDTO.horaInicio();
+            LocalTime fim = agendarConsultaDTO.horaFim();
+
+            if (consultaService.contarPorData(clinica, diaConsulta) >= clinica.getQuantidadeMax()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Quantidade máxima de consultas atingidas para o dia " +diaConsulta+".");
+            }
+
+            consulta.setDiaSemana(diaConsulta);
+            consulta.setHorarioInicio(inicio);
+            consulta.setHorarioFim(fim);
+            consulta.setInformacoesGerais(agendarConsultaDTO.info());
+            consultaRepository.save(consulta);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(consultaService.mapToConsultaDTO(consulta));
         }
 
-        consulta.setDiaSemana(diaConsulta);
-        consulta.setHorarioInicio(inicio);
-        consulta.setHorarioFim(fim);
-        consulta.setInformacoesGerais(agendarConsultaDTO.info());
-        consultaRepository.save(consulta);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(consultaService.mapToConsultaDTO(consulta));
-
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/horario-disponiveis")
     public ResponseEntity<ConsultasDisponiveisResponseDTO> verificarHorariosDisponiveis (@RequestBody VerificarHorariosRequestDTO dto) {
-        ConsultasDisponiveisResponseDTO responseDTO = consultaService.isHorarioOcupado(dto.clinica(), dto.data(), dto.clinica().getInicio(), dto.clinica().getFim());
-        return ResponseEntity.ok(responseDTO);
+        Optional<Clinica> clinicaOptional = clinicaRepositorio.findById(dto.clinica());
+        if (clinicaOptional.isPresent()){
+            Clinica clinica = clinicaOptional.get();
+            ConsultasDisponiveisResponseDTO responseDTO = consultaService.isHorarioOcupado(clinica, dto.data(), clinica.getInicio(), clinica.getFim());
+            ConsultasDisponiveisResponseDTO responseDTO1 = consultaService.isHorarioOcupado(clinica, dto.data(), clinica.getInicio2(), clinica.getFim2());
+
+            List<IntervaloHorarioDTO> horariosDisponiveis = new ArrayList<>(responseDTO.intervaloHorarioDTOS());
+            horariosDisponiveis.addAll(responseDTO1.intervaloHorarioDTOS());
+
+            ConsultasDisponiveisResponseDTO combinedResponseDTO = new ConsultasDisponiveisResponseDTO(responseDTO.limite(), horariosDisponiveis);
+
+            return ResponseEntity.ok(combinedResponseDTO);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/listarByDay")
