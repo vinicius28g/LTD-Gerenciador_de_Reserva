@@ -54,27 +54,35 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
 	
 	private String cpf;
 	
+	private String matricula;
+	
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	private Date dataCriacao;
+	
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	private Date dataUpdate;
+	
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	private Date dataDelete;
+	
     
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
     	switch (tipoUsuario.getCodigo()) {
 			case 1: {
-				return List.of(new SimpleGrantedAuthority(TipoUsuario.ADMIN.getNome()), 
-						new SimpleGrantedAuthority(TipoUsuario.COORDENADOR.getNome()),
-						new SimpleGrantedAuthority(TipoUsuario.FUNCIONARIO.getNome()),
-						new SimpleGrantedAuthority(TipoUsuario.PACIENTE.getNome()));
+				return List.of( new SimpleGrantedAuthority(TipoUsuario.COORDENADOR.getNome()),
+						new SimpleGrantedAuthority(TipoUsuario.PROFESSOR.getNome()),
+						new SimpleGrantedAuthority(TipoUsuario.ALUNO.getNome()));
 			}
 			case 2: {
-				return List.of(new SimpleGrantedAuthority(TipoUsuario.COORDENADOR.name()),
-						new SimpleGrantedAuthority(TipoUsuario.FUNCIONARIO.getNome()),
-						new SimpleGrantedAuthority(TipoUsuario.PACIENTE.getNome()));
+				return List.of(new SimpleGrantedAuthority(TipoUsuario.PROFESSOR.getNome()),
+						new SimpleGrantedAuthority(TipoUsuario.ALUNO.getNome()));
 			}
 			case 3: {
-				return List.of(new SimpleGrantedAuthority(TipoUsuario.FUNCIONARIO.getNome()),
-						new SimpleGrantedAuthority(TipoUsuario.PACIENTE.getNome()));
-			}
-			case 4: {
-				return List.of(new SimpleGrantedAuthority(TipoUsuario.PACIENTE.name()));
+				return List.of(new SimpleGrantedAuthority(TipoUsuario.ALUNO.name()));
 			}
 			default :{
 				throw new IllegalArgumentException("Unexpected value: " + tipoUsuario.getCodigo());
@@ -164,6 +172,38 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
 
 	public void setCpf(String cpf) {
 		this.cpf = cpf;
+	}
+
+	public String getMatricula() {
+		return matricula;
+	}
+
+	public void setMatricula(String matricula) {
+		this.matricula = matricula;
+	}
+
+	public Date getDataCriacao() {
+		return dataCriacao;
+	}
+
+	public void setDataCriacao(Date dataCriacao) {
+		this.dataCriacao = dataCriacao;
+	}
+
+	public Date getDataUpdate() {
+		return dataUpdate;
+	}
+
+	public void setDataUpdate(Date dataUpdate) {
+		this.dataUpdate = dataUpdate;
+	}
+
+	public Date getDataDelete() {
+		return dataDelete;
+	}
+
+	public void setDataDelete(Date dataDelete) {
+		this.dataDelete = dataDelete;
 	}
 	
 

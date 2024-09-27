@@ -70,11 +70,6 @@ public class UsuarioControler {
         }
     }
 
-    @Transactional
-    @PostMapping("/salvar/usuario")
-    public ResponseEntity<?> salvarAdm(@RequestBody UsuarioCadastro usuarioCadastro){
-    	return usuarioService.salvar(usuarioCadastro, TipoUsuario.ADMIN);
-    }
     
     @Transactional
     @PostMapping("/salvar/coordenador")
@@ -82,24 +77,20 @@ public class UsuarioControler {
     	return usuarioService.salvarFuncCord(usuarioCadastro, TipoUsuario.COORDENADOR);
     }
     
+
     @Transactional
-    @PostMapping("/salvar/funcionario")
-    public ResponseEntity<?> salvarFuncionario(@RequestBody FuncCordeCadastro usuarioCadastro){
-    	return usuarioService.salvarFuncCord(usuarioCadastro, TipoUsuario.FUNCIONARIO);
+    @PostMapping("/salvar/professor")
+    public ResponseEntity<?> salvarAdm(@RequestBody UsuarioCadastro usuarioCadastro){
+    	return usuarioService.salvar(usuarioCadastro, TipoUsuario.PROFESSOR);
     }
     
     @Transactional
-    @PostMapping("/salvar/paciente")
+    @PostMapping("/salvar/aluno")
     public ResponseEntity<?> salvarPaciente(@RequestBody UsuarioCadastro usuarioCadastro){
-    	return usuarioService.salvar(usuarioCadastro, TipoUsuario.PACIENTE);
+    	return usuarioService.salvar(usuarioCadastro, TipoUsuario.ALUNO);
     }
     
     // --------------------------- editar ------------------------------
-    @Transactional
-    @PutMapping("/editar/usuario")
-    public ResponseEntity<?> editarAdm(@RequestBody UsuarioCadastro usuarioCadastro){
-    	return usuarioService.editar(usuarioCadastro, TipoUsuario.ADMIN);
-    }
     
     @Transactional
     @PutMapping("/editar/coordenador")
@@ -109,38 +100,35 @@ public class UsuarioControler {
     }
     
     @Transactional
-    @PutMapping("/editar/funcionario")
+    @PutMapping("/editar/professor")
     public ResponseEntity<?> editarEstagiario(@RequestBody UsuarioCadastro usuarioCadastro){
 
-    	return usuarioService.editar(usuarioCadastro, TipoUsuario.FUNCIONARIO);
+    	return usuarioService.editar(usuarioCadastro, TipoUsuario.PROFESSOR);
     }
     
     @Transactional
-    @PutMapping("/editar/paciente")
+    @PutMapping("/editar/aluno")
     public ResponseEntity<?> editarPaciente(@RequestBody UsuarioCadastro usuarioCadastro){
-    	return usuarioService.editar(usuarioCadastro, TipoUsuario.PACIENTE);
+    	return usuarioService.editar(usuarioCadastro, TipoUsuario.ALUNO);
     }
     //---------------- listAll ------------------------------------
     
-    @GetMapping("/listAll/usuario")
-    public ResponseEntity<?> listAllUsuario(){
-    	return usuarioService.listAll(TipoUsuario.ADMIN);
-    }
+   
     
     @GetMapping("/listAll/coordenador")
     public ResponseEntity<?> listAllProfessor(){
     	return usuarioService.listAll(TipoUsuario.COORDENADOR);
     }
     
-    @GetMapping("/listAll/funcionario")
+    @GetMapping("/listAll/professor")
     public ResponseEntity<?> listAllEstagiario(){
-    	return usuarioService.listAll(TipoUsuario.FUNCIONARIO);
+    	return usuarioService.listAll(TipoUsuario.PROFESSOR);
 
     }
     
-    @GetMapping("/listAll/paciente")
+    @GetMapping("/listAll/aluno")
     public ResponseEntity<?> listAllPaciente(){
-    	return usuarioService.listAll(TipoUsuario.PACIENTE);
+    	return usuarioService.listAll(TipoUsuario.ALUNO);
     }
     
     /*
