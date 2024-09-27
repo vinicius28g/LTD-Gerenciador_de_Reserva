@@ -27,11 +27,11 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
 
     public Usuario() {}
 
-    public Usuario(String user, String password, String nome, TipoUsuario tipoUsuario, Clinica clinica) {
+    public Usuario(String user, String password, String nome, TipoUsuario tipoUsuario) {
         this.user = user;
         this.password = password;
         this.tipoUsuario = tipoUsuario;
-        this.clinica = clinica;
+        
     }
 	
     @NotNull
@@ -53,8 +53,7 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
 	private Date dataNascimento;
 	
 	private String cpf;
-	@ManyToOne
-	private Clinica clinica;
+	
     
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -154,13 +153,6 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
 		this.dataNascimento = dataNascimento;
 	}
 
-	public Clinica getClinica() {
-		return clinica;
-	}
-
-	public void setClinica(Clinica clinica) {
-		this.clinica = clinica;
-	}
 
 	public void setPassword(String password) {
 		this.password = password;

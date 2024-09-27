@@ -14,10 +14,8 @@ import org.springframework.stereotype.Service;
 import br.com.projetoBase.dto.FuncCordeCadastro;
 import br.com.projetoBase.dto.RetornoUsuario;
 import br.com.projetoBase.dto.UsuarioCadastro;
-import br.com.projetoBase.modelo.Clinica;
 import br.com.projetoBase.modelo.TipoUsuario;
 import br.com.projetoBase.modelo.Usuario;
-import br.com.projetoBase.repositorio.ClinicaRepositorio;
 
 
 
@@ -30,8 +28,7 @@ public class UsuarioService {
 	@Autowired
 	private UsuarioRepositorio usuarioRepositorio;
 
-	@Autowired
-	private ClinicaRepositorio clinicaRepositorio;
+	
 
 	
 	@Transactional
@@ -84,11 +81,7 @@ public class UsuarioService {
 		  }
 	        Usuario usuario = new Usuario();
 	        
-	        Optional<Clinica> opcionalClinica =  clinicaRepositorio.findById(usuarioCadastro.clinicaId());
-	        if(opcionalClinica.isEmpty()) {
-	        	return new ResponseEntity<>("clinica não encontrada", HttpStatus.CONFLICT); 
-	        }
-	        usuario.setClinica(opcionalClinica.get());
+	       
 	        usuario.setNomeCompleto(usuarioCadastro.nome());
 	        usuario.setTelefone(usuarioCadastro.telefone());
 	        usuario.setDataNascimento(usuarioCadastro.DataNascimento());
