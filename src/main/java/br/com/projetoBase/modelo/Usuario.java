@@ -1,25 +1,23 @@
 package br.com.projetoBase.modelo;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
-
-import jakarta.validation.constraints.NotNull;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Usuario extends EntidadeAbstrata implements UserDetails {
@@ -68,6 +66,9 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date dataDelete;
 	
+	@ManyToMany(mappedBy = "gerenciadores")
+	private Set<Evento> eventos= new HashSet<>();
+//	
     
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -205,6 +206,15 @@ public class Usuario extends EntidadeAbstrata implements UserDetails {
 	public void setDataDelete(Date dataDelete) {
 		this.dataDelete = dataDelete;
 	}
+
+	public Set<Evento> getEventos() {
+		return eventos;
+	}
+
+	public void setEventos(Set<Evento> eventos) {
+		this.eventos = eventos;
+	}
+	
 	
 
 }
